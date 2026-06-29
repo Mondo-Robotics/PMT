@@ -111,6 +111,25 @@ per-checkpoint task/data requirements.
 
 ---
 
+## Demo motion data
+
+A 100-pair sample of terrain-anchored clips ships under
+[`assets/motions/`](assets/motions/README.md) (git-lfs) so the terrain / distill tasks run
+out-of-the-box: `terrain_mocaphouse/walk_dance1sub2start/{raw,optimized}/` (100 matched
+`raw`↔`optimized` pairs — the distill pipeline uses `optimized` as the teacher reference and
+`raw` as the student reference). Point PMT at it:
+
+```bash
+git lfs pull                                          # fetch the .npz clips
+export PMT_TERRAIN_MOTION_ROOT=$(pwd)/assets/motions  # from the repo root
+python scripts/play.py --task PMT-WalkDanceBigMap-G1-v0 \
+  --resume_path checkpoints/pretrained/walkdance_bigmap_teacher.pt --num_envs 4
+```
+
+See [`assets/motions/README.md`](assets/motions/README.md) for details.
+
+---
+
 ## TCRS — terrain motion generation
 
 [TCRS](TCRS/README.md) is the terrain-adaptive motion optimizer (MPPI). It takes a **flat-ground
