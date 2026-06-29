@@ -83,19 +83,31 @@ git lfs install          # once
 git lfs pull             # fetch the .pt / .onnx files after cloning
 ```
 
-| File | Task / gym id | Network |
-| --- | --- | --- |
-| `multimotionv2_flat.pt` | `PMT-G1-MultiMotionV2-Flat-v0` | ActorCritic (MLP) |
-| `rgmt_flat.pt` | `RGMT-G1-v0` | TransformerActorCritic |
-| `sonic_onnx/` | `PMT-SONIC-G1-MultiMotionV2-Flat-v0` | SONIC (official ONNX) |
+| File | Task / gym id | Network | reward |
+| --- | --- | --- | --- |
+| `multimotionv2_flat.pt` | `PMT-G1-MultiMotionV2-Flat-v0` | ActorCritic (MLP) | 40.9 |
+| `multimotionv2_streaming_flat.pt` | `PMT-G1-MultiMotionV2-Streaming-Flat-v0` | ActorCritic (MLP) | 39.5 |
+| `multimotionv2_adaptive_flat.pt` | `PMT-G1-MultiMotionV2-Adaptive-Flat-v0` | ActorCritic (MLP) | 46.4 |
+| `multimotionv2_uniform_flat.pt` | `PMT-G1-MultiMotionV2-Uniform-Flat-v0` | ActorCritic (MLP) | 46.4 |
+| `bpo_multimotionv2_flat.pt` | `PMT-G1-BPO-MultiMotionV2-Flat-v0` | ActorCritic (MLP) | 33.7 |
+| `fpo_plus_singleclip_flat.pt` | `PMT-G1-FPOPlus-SingleClip-Flat-v0` | DiffusionActorCritic | 39.9 |
+| `add_multimotion_flat.pt` | `PMT-ADD-MultiMotionV2-Flat-v0` | ActorCritic + discriminator | 18.0¹ |
+| `rgmt_flat.pt` | `RGMT-G1-v0` | TransformerActorCritic | 33.5 |
+| `perceptive_motion_token_tracker.pt` | `PMT-PerceptiveMotionTokenTracker-G1-v0` | PerceptiveMotionTokenTracker | 80.9 |
+| `pcrbt_100style.pt` | `PMT-PCaRBT-100style-G1-v0` | PerceptiveResidualBehaviorTokenTracker | 62.4 |
+| `walkdance_bigmap_teacher.pt` | `PMT-WalkDanceBigMap-G1-v0` | TransformerActorCritic | 86.6 |
+| `sonic_onnx/` | `PMT-SONIC-G1-MultiMotionV2-Flat-v0` | SONIC (official ONNX) | — |
+
+¹ ADD's `Train/mean_reward` is intentionally small (adversarial imitation); the run is full-length and healthy.
+`reward` = max `Train/mean_reward`. **BFM-Zero** ships no checkpoint (its FB-CPR runner produced none).
 
 ```bash
 python scripts/play.py --task PMT-G1-MultiMotionV2-Flat-v0 \
   --resume_path checkpoints/pretrained/multimotionv2_flat.pt --num_envs 16
 ```
 
-See [`checkpoints/pretrained/README.md`](checkpoints/pretrained/README.md) for the full table,
-provenance, and per-checkpoint task/data requirements.
+See [`checkpoints/pretrained/README.md`](checkpoints/pretrained/README.md) for provenance and
+per-checkpoint task/data requirements.
 
 ---
 
