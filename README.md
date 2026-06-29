@@ -4,14 +4,7 @@
 
 PMT trains humanoid **motion-tracking** RL policies on [Isaac Lab](https://isaac-sim.github.io/IsaacLab/):
 DeepMimic-style imitation, vision/terrain perception, cross-embodiment (SONIC), adversarial
-imitation (ADD), and **teacher → distill → finetune** pipelines. It is a config-driven
-reorganization of the original `whole_body_tracking` repo, whose 163 tasks were each a bespoke
-Python class hierarchy.
-
-> **The PMT thesis: a task is a short YAML composition of independent axes, not a subclass.**
-> A builder *composes* the selected axes, *derives* the coupled fields, *validates* the
-> combination against a compatibility matrix, and emits Isaac Lab `@configclass` instances.
-> Adding or changing a task touches **data + builder logic**, not class trees.
+imitation (ADD), and **teacher → distill → finetune** pipelines. 
 
 ---
 
@@ -22,6 +15,7 @@ Python class hierarchy.
 3. [Repository layout](#3-repository-layout)
 4. [How it works: the axis taxonomy](#4-how-it-works-the-axis-taxonomy)
 5. [Quickstart: train & play](#5-quickstart-train--play)
+5b. [Pretrained models](#5b-pretrained-models)
 6. [The PMT pipeline: teacher → distill → finetune](#6-the-pmt-pipeline-teacher--distill--finetune)
 7. [Task catalog](#7-task-catalog)
 8. [How to add a new task](#8-how-to-add-a-new-task)
