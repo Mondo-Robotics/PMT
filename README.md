@@ -73,6 +73,18 @@ route to `DistillationRunner`, on-policy tasks to `OnPolicyRunner`, same entrypo
 
 ---
 
+## Run on MuJoCo (mjlab backend)
+
+PMT also runs on **[mjlab](https://github.com/mujocolab/mjlab)** (a MuJoCo-Warp reimplementation of
+Isaac Lab's manager-based API) — convert a clip, then eval or view a trained checkpoint in mjlab.
+The flat task family is wired today; terrain/vision/distill stay Isaac-Lab-only for now, and
+checkpoints need a short mjlab fine-tune for exact transfer.
+
+**👉 See [`docs/MJLAB_USAGE.md`](docs/MJLAB_USAGE.md) for the full how-to** (install, clip
+conversion, the eval/view commands, supported tasks, and backend selection).
+
+---
+
 ## Pretrained models
 
 Ready-to-use G1 policies ship under [`checkpoints/pretrained/`](checkpoints/pretrained/), tracked
@@ -127,7 +139,9 @@ python scripts/play.py --task PMT-WalkDanceBigMap-G1-v0 \
   --resume_path checkpoints/pretrained/walkdance_bigmap_teacher.pt --num_envs 4
 ```
 
-See [`assets/motions/README.md`](assets/motions/README.md) for details.
+See [`assets/motions/README.md`](assets/motions/README.md) for details. Bringing your own clips?
+**[`docs/MOTION_DATA_FORMAT.md`](docs/MOTION_DATA_FORMAT.md)** is the `.npz` contract the motion
+command expects — required keys, shapes, dtypes, and the Isaac-Lab body/joint order.
 
 ---
 
