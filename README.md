@@ -190,7 +190,9 @@ config-author guide and [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the d
   distill → finetune pipeline, SONIC ONNX, BFM-Zero, and how to add a task / motion / robot / network.
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — axis taxonomy, derivation table, layering contract.
 - [`docs/compat_matrix.md`](docs/compat_matrix.md) — generated algorithm × network compatibility matrix.
-- [`docs/MJLAB_BACKEND_PLAN.md`](docs/MJLAB_BACKEND_PLAN.md) — MuJoCo/mjlab backend port plan.
+- [`docs/MJLAB_USAGE.md`](docs/MJLAB_USAGE.md) — **how to run PMT on the mjlab (MuJoCo-Warp) backend**: convert clips, eval/view a trained ckpt, select the backend.
+- [`docs/MJLAB_BACKEND_PLAN.md`](docs/MJLAB_BACKEND_PLAN.md) — MuJoCo/mjlab backend port plan + status (design doc).
+- [`docs/MOTION_DATA_FORMAT.md`](docs/MOTION_DATA_FORMAT.md) — the `.npz` motion-clip contract (keys, shapes, body/joint order) the motion command consumes.
 - [`pmt_tasks/env_cfgs/README.md`](pmt_tasks/env_cfgs/README.md) — released task families + env cfgs.
 - [`TCRS/README.md`](TCRS/README.md) — terrain-adaptive motion generation.
 - [`checkpoints/pretrained/README.md`](checkpoints/pretrained/README.md) — pretrained model table + provenance.

@@ -379,7 +379,10 @@ paired: true
 Set the per-motion control rate (`decimation` / `sim_dt`) in the motion YAML — the env builder copies
 it onto the env cfg (e.g. backflip uses `dec=10`/`dt=0.002`). Termination thresholds live in the
 per-family env cfgs (`pmt_tasks/env_cfgs/…`), not the motion YAML. Clip `*.npz` are stored in
-Isaac-Lab BFS body/joint order — see `scripts/pmt_npz_to_mjlab.py` for the exact array contract.
+Isaac-Lab BFS body/joint order — see [`MOTION_DATA_FORMAT.md`](MOTION_DATA_FORMAT.md) for the full
+clip contract (required keys, shapes, dtypes, body/joint order) and `scripts/pmt_npz_to_mjlab.py`
+for the exact array order lists. To run tasks on the **mjlab** backend instead of Isaac Lab, see
+[`MJLAB_USAGE.md`](MJLAB_USAGE.md).
 
 ### Add a new robot
 

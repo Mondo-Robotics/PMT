@@ -13,7 +13,8 @@ terrain_mocaphouse/walk_dance1sub2start/
   pairs them — `optimized` → teacher command `motion`, `raw` → student command `student_motion`).
 - The `optimized` clips are the TCRS terrain-adaptation output (feet re-placed onto the big_map
   mesh); the `raw` clips are the flat-retarget inputs. Schema: 50 fps, 29 G1 joints, world-frame
-  body poses (`joint_pos/joint_vel/body_pos_w/body_quat_w/...`).
+  body poses (`joint_pos/joint_vel/body_pos_w/body_quat_w/...`). Full clip contract (required keys,
+  shapes, dtypes, body/joint order) is in [`docs/MOTION_DATA_FORMAT.md`](../../docs/MOTION_DATA_FORMAT.md).
 - This is a **100-clip subset** of the full 500-clip `walk_dance1sub2start` set (kept small for the
   public repo); enough to train/play the terrain teacher and the distill student on a demo scale.
 
