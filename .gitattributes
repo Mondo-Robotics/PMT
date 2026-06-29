@@ -3,3 +3,5 @@ checkpoints/**/*.pt filter=lfs diff=lfs merge=lfs -text
 checkpoints/**/*.onnx filter=lfs diff=lfs merge=lfs -text
 *.pt filter=lfs diff=lfs merge=lfs -text
 *.onnx filter=lfs diff=lfs merge=lfs -text
+*.npz filter=lfs diff=lfs merge=lfs -text
+TCRS/**/*.npz filter=lfs diff=lfs merge=lfs -text

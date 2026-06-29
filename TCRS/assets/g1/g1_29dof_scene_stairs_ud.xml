@@ -1,0 +1,38 @@
+<mujoco model="g1_29dof_scene_stairs_ud">
+  <include file="g1_29dof_rev_1_0.xml"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <global azimuth="-90" offheight="1024" offwidth="1024"/>
+  </visual>
+
+  <worldbody>
+    <light
+      pos="0 0 2.5"
+      dir="0 0 -1"
+      diffuse="0.6 0.6 0.6"
+      specular="0.3 0.3 0.3"
+      directional="true"
+      castshadow="false"
+    />
+
+    <!-- <geom name="scene_floor" type="plane" size="8 4 0.1" pos="0 0 0" rgba="0.7 0.7 0.7 1"/> -->
+
+    <!-- Ascending stairs: 5 steps, depth=0.20, height=0.10, start_x=0.50, width=2.0 -->
+    <geom name="step_up_0" type="box" size="0.15 1.00 0.05" pos="0.60 0 0.05" rgba="0.55 0.55 0.55 1"/>
+    <geom name="step_up_1" type="box" size="0.15 1.00 0.10" pos="0.80 0 0.10" rgba="0.58 0.58 0.58 1"/>
+    <geom name="step_up_2" type="box" size="0.15 1.00 0.15" pos="1.00 0 0.15" rgba="0.60 0.60 0.60 1"/>
+    <geom name="step_up_3" type="box" size="0.15 1.00 0.20" pos="1.20 0 0.20" rgba="0.62 0.62 0.62 1"/>
+    <geom name="step_up_4" type="box" size="0.15 1.00 0.25" pos="1.40 0 0.25" rgba="0.64 0.64 0.64 1"/>
+
+    <!-- Top platform: depth=0.40 at z=0.50 -->
+    <geom name="platform_top" type="box" size="0.20 1.00 0.25" pos="1.70 0 0.25" rgba="0.50 0.50 0.55 1"/>
+
+    <!-- Descending stairs: symmetric count and dimensions -->
+    <geom name="step_down_0" type="box" size="0.15 1.00 0.25" pos="2.00 0 0.25" rgba="0.52 0.52 0.56 1"/>
+    <geom name="step_down_1" type="box" size="0.15 1.00 0.20" pos="2.20 0 0.20" rgba="0.54 0.54 0.58 1"/>
+    <geom name="step_down_2" type="box" size="0.15 1.00 0.15" pos="2.40 0 0.15" rgba="0.56 0.56 0.60 1"/>
+    <geom name="step_down_3" type="box" size="0.15 1.00 0.10" pos="2.60 0 0.10" rgba="0.58 0.58 0.62 1"/>
+    <geom name="step_down_4" type="box" size="0.15 1.00 0.05" pos="2.80 0 0.05" rgba="0.60 0.60 0.64 1"/>
+  </worldbody>
+</mujoco>

@@ -218,3 +218,207 @@ Two task configs are intentionally not single-command train targets:
 | --- | --- |
 | `vision_ablation_base` | Composition and ablation demo plus pure-test target. It needs explicit network overrides, vision-teacher assets, and runtime wiring before it can become a direct train task. |
 | `ppofinetune_vision_teacher_stepping_stone_latent_anchor` | PPO finetune scaffold for a pretrained vision-teacher checkpoint. The env and agent builders are intentionally not wired until that checkpoint and launch contract are provided. |
+
+## The PMT pipeline: teacher → distill → finetune
+
+PMT's most involved workflow trains a **blind privileged teacher** on terrain, **distills** it into
+a **vision student** that replaces the privileged terrain knowledge with proprioception + a
+height-scan (but not the privileged anchor), and optionally **PPO-finetunes** the student. This is
+the stepping-stone reference pipeline.
+
+```
+ (raw + optimized clips, terrain mesh)
+            │
+            ▼
+ ┌─────────────────────────┐   teacher ckpt (model_*.pt)
+ │ 1. TEACHER  (scratch)   │ ───────────────────────────┐
+ │   blind transformer     │                            │
+ │   PPO on stepping-stone │                            ▼
+ └─────────────────────────┘            configs/checkpoints/ss_teacher.yaml
+            │                            (run_dir + checkpoint: latest|model_X.pt)
+            │                                            │
+            ▼                                            │ ${checkpoints.ss_teacher}
+ ┌─────────────────────────┐                            │
+ │ 2. DISTILL  (distill)   │ ◀──────────────────────────┘
+ │   vision STUDENT learns │   teacher reads OPTIMIZED clips ("motion"),
+ │   from frozen teacher   │   student reads synced RAW clips ("student_motion"),
+ │   via height-scan       │   teacher-mix anneals 1.0 → 0.0
+ └─────────────────────────┘
+            │  student ckpt
+            ▼
+ ┌─────────────────────────┐
+ │ 3. FINETUNE (finetune)  │   PPO-finetune the vision policy (warmup-freeze,
+ │   PPO refine the policy │   reset action-std on load)
+ └─────────────────────────┘
+```
+
+**Raw vs optimized clips.** Terrain pipelines use **two** versions of the same source clip:
+
+- **optimized** — terrain-IK-adapted so feet land on stones/stairs; the *teacher* tracks these.
+- **raw** — the un-adapted motion; the *student* tracks these (synced to the teacher by basename).
+
+The paired-command env (`configs/motion/stepping_stone_paired.yaml`) loads both: optimized →
+teacher command `motion`, raw → student command `student_motion`. Optimized clips are produced
+upstream by [TCRS](../TCRS/README.md); PMT consumes the resulting `*.npz`.
+
+### Stage 1 — train the teacher (`stage: scratch`)
+
+```bash
+python scripts/train.py --task PMT-SteppingStone-G1-v0 \
+  --num_envs <n> --headless --max_iterations <iters>
+```
+
+- Task: `configs/task/pmt_stepping_stone.yaml` (`network: transformer`, `obs: transformer_hist`,
+  `sensor: none`, `algorithm: ppo`).
+- Output: `logs/rsl_rl/pmt_stepping_stone/<run>/model_<iter>.pt`.
+
+### Register the teacher checkpoint
+
+Point `configs/checkpoints/ss_teacher.yaml` at the run you just trained:
+
+```yaml
+run_dir: ${paths.CKPT_ROOT}/pmt_stepping_stone/<timestamped_run>
+checkpoint: model_9999.pt        # explicit file -> joined onto run_dir
+```
+
+### Stage 2 — distill into a vision student (`stage: distill`)
+
+```bash
+python scripts/train.py --task PMT-Distill-SteppingStone-LatentAnchor-G1-v0 \
+  --num_envs <n> --headless --max_iterations <iters>
+```
+
+- Task: `configs/task/distill_stepping_stone_latent_anchor.yaml`
+  (`network: vision_student_latent_anchor`, `obs: vision_student`, `sensor: height_scan`,
+  `algorithm: distillation` → `DistillationRunner`).
+- The task references the teacher via `network.teacher_ckpt: ${checkpoints.ss_teacher}`; the
+  builder injects it into the frozen distillation target. With `teacher_ckpt: null` the teacher is
+  random-init — the **runner path** runs end-to-end but the distillation loss is meaningless (this
+  is the CI gate; supply a real teacher for a real run).
+- A simpler `StudentTeacher` MLP-pair variant exists for path-testing:
+  `PMT-Distill-SteppingStone-G1-v0`.
+
+### Stage 3 — PPO-finetune the vision policy (`stage: finetune`)
+
+The finetune scaffold is `configs/task/ppofinetune_vision_teacher_stepping_stone_latent_anchor.yaml`
+(`stage: finetune` → `lr=5e-4`, `warmup_freeze_iters=200`, `reset_action_std_on_load=true`). It is
+**not yet a one-command train target**: it requires a trained vision-teacher checkpoint and finetune
+env/agent wiring before `gym.make` can build it. Wire those, then launch it like any other PPO task.
+
+> The three `stage/*.yaml` files are the single source of the lr / freeze / resume / teacher-mix
+> deltas; the rest of each task differs only by the independent axis it selects.
+
+## Extending PMT
+
+A task **selects** the independent axes (`robot` / `terrain` / `motion` / `scene` / `sensor` /
+`obs` / `reward` / `network` / `algorithm` / `stage`); the builder **derives** the coupled ones
+(`runner`, `obs_groups`, `decimation` / `sim.dt`, termination thresholds). See
+[ARCHITECTURE.md](ARCHITECTURE.md) for the full axis taxonomy and derivation table.
+
+### Add a new task
+
+Write **one** `configs/task/<stem>.yaml`: a `defaults:` list (one choice per axis) plus task-local
+overrides. Tasks that differ only on *derived* fields share a YAML — you only need a new task YAML
+when an *independent* axis choice differs.
+
+```yaml
+# configs/task/my_task.yaml
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: multi
+  - scene: none
+  - sensor: none
+  - obs: proprio
+  - reward: deepmimic_anchor
+  - network: mlp
+  - algorithm: ppo          # runner derived -> on_policy
+  - stage: scratch
+experiment_name: my_task
+
+# task-local overrides merge on top of the composed axes:
+motion:
+  motion_files: ${paths.MOTION_ROOT}/my_clips
+```
+
+Then map the stem to an env builder in `_ENV_BUILDERS` in `pmt_tasks/builder.py`: `build_env_cfg`
+looks the stem up there and raises if it is absent. If the task reuses an existing family, this is a
+**one-line** entry pointing the stem at that family's existing builder; only a genuinely new
+scene/sensor wiring needs a new builder function. Optionally map the stem to a friendly gym id in
+`pmt_tasks/registry_gym.py` (`_TASK_ID_MAP`), or rely on the `PMT-<stem>-v0` fallback. The pure CI
+(`tests/test_all_tasks_resolve.py`) automatically loads every new YAML and asserts it composes +
+derives + validates.
+
+### Train on a new motion
+
+**A. Plane / flat tasks — just point at the clips.** Drop your `*.npz` clips in a directory and
+override `motion.motion_files`:
+
+```yaml
+# configs/task/my_flat_task.yaml  (terrain: flat, motion: multi or single_clip)
+motion:
+  motion_files: ${paths.MOTION_ROOT}/my_flat_clips   # a dir of NPZs, or a single .npz
+```
+
+For a single clip, select `motion: single_clip`; for many clips, `motion: multi` (eager) with a
+sampler/storage choice (`sampler: uniform|adaptive|bin_adaptive`, `storage_mode: eager|streaming`).
+Streaming bounds memory for large clip sets (e.g. the 100-style split).
+
+**B. Terrain / PMT tasks — you need raw *and* optimized clips.** Terrain tracking requires both
+versions of each clip: **optimized** clips (terrain-IK adapted) for the teacher, **raw** clips for
+the vision student, plus the matching terrain mesh referenced by the `terrain` axis. Optimized clips
+are produced upstream by [TCRS](../TCRS/README.md); PMT consumes the resulting `*.npz`. Wire them via
+a paired motion YAML (model it on `configs/motion/stepping_stone_paired.yaml`):
+
+```yaml
+motion_files:     ${paths.TERRAIN_MOTION_ROOT}/<dataset>/<clip>/optimized   # teacher
+raw_motion_files: ${paths.TERRAIN_MOTION_ROOT}/<dataset>/<clip>/raw         # student
+paired: true
+```
+
+Set the per-motion control rate (`decimation` / `sim_dt`) in the motion YAML — the env builder copies
+it onto the env cfg (e.g. backflip uses `dec=10`/`dt=0.002`). Termination thresholds live in the
+per-family env cfgs (`pmt_tasks/env_cfgs/…`), not the motion YAML. Clip `*.npz` are stored in
+Isaac-Lab BFS body/joint order — see `scripts/pmt_npz_to_mjlab.py` for the exact array contract.
+
+### Add a new robot
+
+The `robot` axis currently ships only G1, but the pattern is:
+
+1. **Asset config** — add a robot module under `pmt_tasks/robots/` (model it on `g1.py`) exposing an
+   Isaac Lab `ArticulationCfg` (USD path, actuator stiffness/damping/armature) and an action-scale
+   constant. Robot USD/meshes are resolved through `pmt_tasks/asset_config.py` (`PMT_ASSET_DIR`).
+2. **Axis YAML** — add `configs/robot/<name>.yaml` with `name:`, default `decimation`, `sim_dt`, and
+   any robot-level fields.
+3. **Wire it into the env cfg** — the env families import the robot's `ArticulationCfg`
+   (e.g. `from pmt_tasks.robots.g1 import G1_CYLINDER_CFG, G1_ACTION_SCALE` in
+   `pmt_tasks/env_cfgs/multi_motion_flat.py`). Add the analogous import/branch for your robot.
+4. **Motions for that embodiment** — motion clips are robot-specific (joint order / body set), so
+   provide clips retargeted to the new robot.
+
+Then select `robot: <name>` in any task YAML. (Full cross-embodiment training, including SMPL/human
+encoders, is the SONIC path — see the SONIC section above.)
+
+### Add a network or algorithm
+
+Full worked guide in `configs/README.md`.
+
+**Add a network** (≈5 touch points):
+
+1. Decorate the `nn.Module` in `motion_tracking_rl/networks/`:
+   `@register_network("MyNetClass", compat_name="my_net")` — `name` must equal the ckpt `class_name`
+   for checkpoint compatibility; `compat_name` is the axis name.
+2. Add the module to the network import list in `registry.autoload()` so the decorator fires.
+3. `configs/network/my_net.yaml` with `name: MyNetClass` + hyperparams.
+4. Extend the `policy` `@configclass` union in `pmt_tasks/isaaclab_rl/rsl_rl/rl_cfg.py`.
+5. Add `"my_net"` to the `compatible_networks` of every algorithm in `compat.py` that should accept it.
+
+**Add an algorithm** (≈3 touch points):
+
+1. Decorate the class in `motion_tracking_rl/algorithms/` and add it to `registry.autoload()`.
+2. `configs/algorithm/my_alg.yaml` with `name:` + feature flags + hyperparams.
+3. A new `compat.SPECS` entry (`AlgorithmSpec`) declaring its runner, compatible networks, feature
+   support, paired-command requirement, and required obs sets.
+
+`registry.assert_compat_consistency()` (run by the builder and CI) fails loud if the registry tables
+drift from `compat.SPECS`. The generated matrix is [compat_matrix.md](compat_matrix.md).

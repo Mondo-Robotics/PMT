@@ -1,0 +1,80 @@
+{
+    "_comment": "Per-body IK weights for G1 lower body. pos_weight/rot_weight scale the error and Jacobian rows. Keep in range 0-10 to avoid ill-conditioning. 0 = disabled.",
+
+    "body_weights": {
+        "pelvis": {
+            "pos_weight": 1,
+            "rot_weight": 1.0,
+            "_note": "Root position handled by root_xy/z_weight in solver section"
+        },
+
+        "left_hip_pitch_link":   { "pos_weight": 0.0, "rot_weight": 0.0 },
+        "left_hip_roll_link":    { "pos_weight": 0.0, "rot_weight": 0.0 },
+        "left_hip_yaw_link":     { "pos_weight": 0.0, "rot_weight": 0.0 },
+        "left_knee_link":        { "pos_weight": 0.0, "rot_weight": 0.0 },
+        "left_ankle_pitch_link": { "pos_weight": 0.0, "rot_weight": 0.0 },
+
+        "right_hip_pitch_link":   { "pos_weight": 0.0, "rot_weight": 0.0 },
+        "right_hip_roll_link":    { "pos_weight": 0.0, "rot_weight": 0.0 },
+        "right_hip_yaw_link":     { "pos_weight": 0.0, "rot_weight": 0.0 },
+        "right_knee_link":        { "pos_weight": 0.0, "rot_weight": 0.0 },
+        "right_ankle_pitch_link": { "pos_weight": 0.0, "rot_weight": 0.0 },
+
+        "left_ankle_roll_link": {
+            "pos_weight": 10.0,
+            "rot_weight": 6.0,
+            "_note": "Ankle origin constraint point"
+        },
+        "right_ankle_roll_link": {
+            "pos_weight": 10.0,
+            "rot_weight": 6.0,
+            "_note": "Ankle origin constraint point"
+        },
+
+        "left_toe": {
+            "pos_weight": 6.0,
+            "rot_weight": 0.0,
+            "offset": [0.12, 0.0, -0.03],
+            "_note": "Virtual point — rot_weight must be 0 (no body orientation)"
+        },
+        "left_heel": {
+            "pos_weight": 6.0,
+            "rot_weight": 0.0,
+            "offset": [-0.05, 0.0, -0.03],
+            "_note": "Virtual point — rot_weight must be 0 (no body orientation)"
+        },
+        "right_toe": {
+            "pos_weight": 6.0,
+            "rot_weight": 0.0,
+            "offset": [0.12, 0.0, -0.03],
+            "_note": "Virtual point — rot_weight must be 0 (no body orientation)"
+        },
+        "right_heel": {
+            "pos_weight": 6.0,
+            "rot_weight": 0.0,
+            "offset": [-0.05, 0.0, -0.03],
+            "_note": "Virtual point — rot_weight must be 0 (no body orientation)"
+        }
+    },
+
+    "solver": {
+        "max_iters": 60,
+        "tol": 1e-3,
+        "damping": 0.05,
+        "step_size": 0.5,
+        "posture_weight": 0.01,
+        "max_joint_step": 0.20,
+        "penetration_weight": 20.0,
+        "root_xy_weight": 3.0,
+        "root_z_weight": 20,
+        "knee_forward_weight": 15.0,
+        "multiseed_enabled": true,
+        "multiseed_num_seeds": 3,
+        "multiseed_trigger_pos_err": 0.20,
+        "multiseed_trigger_joint_step": 0.80,
+        "multiseed_seed_span": 0.35,
+        "multiseed_continuity_weight": 0.25,
+        "multiseed_posture_weight": 0.02,
+        "_knee_forward_note": "Penalizes knee too far behind pelvis in forward direction. 0=off."
+    }
+}
