@@ -18,6 +18,10 @@ local:
   DATA_ROOT: ${oc.env:PMT_DATA_ROOT,${oc.env:HOME}/whole_body_tracking}
   MOTION_ROOT: ${oc.env:PMT_MOTION_ROOT,${.DATA_ROOT}/motions}
   TERRAIN_ROOT: ${.DATA_ROOT}          # *.stl live at repo root today
+  # Terrain MESH (.stl) dir. The repo ships the demo meshes under assets/terrain/; set
+  # PMT_TERRAIN_ASSET_DIR=$(pwd)/assets/terrain (from the repo root) to use them. Falls
+  # back to TERRAIN_ROOT for setups that keep meshes alongside the dataset.
+  TERRAIN_ASSET_DIR: ${oc.env:PMT_TERRAIN_ASSET_DIR,${.TERRAIN_ROOT}}
   CKPT_ROOT: ${oc.env:PMT_CKPT_ROOT,${.DATA_ROOT}/logs/rsl_rl}
   # Shared dataset root holding terrain/SONIC clips. Override with PMT_DATASET_ROOT
   # when the data lives outside this generic release fallback.
@@ -45,6 +49,7 @@ cluster:
   # *.stl meshes (positive_stepping_with_stairs.stl, g1_29dof_big_map_with_flat.stl,
   # scripts/motion_adapter/assets/g1/g1_29dof_big_map.stl) live under DATA_ROOT on the NAS.
   TERRAIN_ROOT: ${.DATA_ROOT}
+  TERRAIN_ASSET_DIR: ${oc.env:PMT_TERRAIN_ASSET_DIR,${.TERRAIN_ROOT}}
   # PMT training runs (train_pmt.py) write checkpoints under the PMT repo's logs/rsl_rl,
   # NOT the whole_body_tracking DATA_ROOT. The named checkpoints (configs/checkpoints/*)
   # — e.g. the stepping-stone teacher used by the latent-anchor distill task —

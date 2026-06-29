@@ -24,6 +24,7 @@ that root to this repo's `assets/motions` (local profile):
 
 ```bash
 export PMT_TERRAIN_MOTION_ROOT=$(pwd)/assets/motions      # from the repo root
+export PMT_TERRAIN_ASSET_DIR=$(pwd)/assets/terrain        # the big_map .stl mesh (shipped)
 # WalkDanceBigMap teacher (uses optimized/ clips on the big_map mesh)
 python scripts/train.py --task PMT-WalkDanceBigMap-G1-v0 --num_envs <n> --headless
 # or play the shipped teacher checkpoint:

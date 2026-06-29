@@ -1,7 +1,7 @@
 # axis: terrain  (PMT plan §2, §7 source: stepping_stone_env_cfg.py)
 type: stepping_stone
 # Verified mesh (stepping_stone_env_cfg.py:34 LOCAL_STEPPING_STONE_TERRAIN_MESH).
-mesh_path: ${paths.TERRAIN_ROOT}/positive_stepping_with_stairs.stl
+mesh_path: ${paths.TERRAIN_ASSET_DIR}/positive_stepping_with_stairs.stl
 # MeshCompatibleTerrainImporterCfg sensor geometry (height-scan grid, contact sensor)
 # is baked in the ported SteppingStoneSceneCfg (pmt_tasks/env_cfgs/stepping_stone.py);
 # lifting it to YAML is a Phase-2 parametrization TODO (plan §7).

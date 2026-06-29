@@ -121,7 +121,8 @@ out-of-the-box: `terrain_mocaphouse/walk_dance1sub2start/{raw,optimized}/` (100 
 
 ```bash
 git lfs pull                                          # fetch the .npz clips
-export PMT_TERRAIN_MOTION_ROOT=$(pwd)/assets/motions  # from the repo root
+export PMT_TERRAIN_MOTION_ROOT=$(pwd)/assets/motions  # demo clips (from the repo root)
+export PMT_TERRAIN_ASSET_DIR=$(pwd)/assets/terrain    # big_map .stl mesh (shipped under assets/terrain/)
 python scripts/play.py --task PMT-WalkDanceBigMap-G1-v0 \
   --resume_path checkpoints/pretrained/walkdance_bigmap_teacher.pt --num_envs 4
 ```

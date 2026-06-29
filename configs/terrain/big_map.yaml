@@ -6,4 +6,4 @@
 # matches the clip's dx/dy). Reuses the stepping-stone scene geometry (height-scan
 # grid + contact sensor) from PMTSteppingStoneEnvCfg.
 type: stepping_stone
-mesh_path: ${paths.DATA_ROOT}/scripts/motion_adapter/assets/g1/g1_29dof_big_map.stl
+mesh_path: ${paths.TERRAIN_ASSET_DIR}/g1_29dof_big_map.stl

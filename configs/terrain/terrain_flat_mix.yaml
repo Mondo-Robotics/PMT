@@ -5,7 +5,7 @@
 # big-map region; flat clips are shifted onto the flat patch via per-clip env-origin
 # injection (flat_origin in motion/grouped_terrain_flat.yaml == this patch's (90,0,0)).
 type: terrain_flat_mix
-mesh_path: ${paths.TERRAIN_ROOT}/g1_29dof_big_map_with_flat.stl
+mesh_path: ${paths.TERRAIN_ASSET_DIR}/g1_29dof_big_map_with_flat.stl
 # Sensor geometry (height-scan grid + contact sensor) is baked in the ported scene cfg
 # (pmt_tasks/env_cfgs/terrain_flat_mix.py reuses SteppingStoneSceneCfg); lifting it to
 # YAML is a Phase-2 parametrization TODO (plan §7).
