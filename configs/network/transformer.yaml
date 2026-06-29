@@ -1,0 +1,11 @@
+# axis: network  (PMT plan section 2/4; name == old class_name for ckpt compat)
+# Runtime hyperparameters live in pmt_tasks/agent_cfgs/transformer.py.
+# TransformerActorCritic accepts n_embd/n_heads/history_len/cmd_len/mlp_ratio
+# and has one causal history self-attention block plus one command cross-attention block.
+# There is no n_layers constructor argument.
+name: TransformerActorCritic     # registry.NETWORKS key (decorated class)
+n_embd: 128
+n_heads: 4
+history_len: 10
+cmd_len: 21
+mlp_ratio: 4

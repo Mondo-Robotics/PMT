@@ -1,0 +1,20 @@
+# task: ADD multi-motion flat  (was G1-ADD-MultiMotionV2-Flat-v0)
+# Phase-1 widened slice (plan §6): different algorithm (add_ppo) + discriminator obs
+# sets + flat terrain. Exercises couplings the stepping-stone capstone did NOT.
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: add_multi
+  - scene: none
+  - sensor: none
+  - obs: add_discriminator
+  - reward: add_null
+  - network: mlp
+  - algorithm: add_ppo      # runner derived → on_policy
+  - stage: scratch
+experiment_name: g1_add_multimotionv2_flat
+
+# Profile-driven motion dir (cluster has NO motions/debug/robot_lafan1): local ->
+# ${MOTION_ROOT}/lafan_walk; cluster -> sonic/lafan1/robot_lafan1 (40 clips).
+motion:
+  motion_files: ${paths.MULTIMOTION_FLAT_MOTION}

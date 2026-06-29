@@ -1,0 +1,18 @@
+# PMT ablation BASE task (plan §3b "ablations = overrides + --multirun, not one
+# class each"). This single task yaml + a Hydra --multirun network-override sweep
+# generates the whole architecture/field-flip ablation family. It is a COMPOSITION
+# demonstration target (the pure test composes it with each ablation network
+# override and asserts the right field flips); the full runtime sweep is documented
+# in the report and is gated on the vision-teacher checkpoint + height-scan data.
+defaults:
+  - robot: g1
+  - terrain: stepping_stone
+  - motion: multi
+  - scene: none
+  - sensor: none
+  - obs: perceptive_motion_token   # exposes vision (height_scan) + future-motion groups
+  - reward: deepmimic_anchor
+  - network: vision_transformer    # ablation base; --multirun swaps this
+  - algorithm: ppo
+  - stage: scratch
+experiment_name: vision_ablation

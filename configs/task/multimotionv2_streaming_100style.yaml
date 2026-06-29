@@ -1,0 +1,14 @@
+# Streaming validation on the LARGE 100style set: exercises the working-set SWAP
+# (max_working_set=256 << 1620 clips) when run with PMT_MOTION_RESAMPLE_FREQ>0.
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: streaming_100style
+  - scene: none
+  - sensor: none
+  - obs: proprio
+  - reward: deepmimic_anchor
+  - network: mlp
+  - algorithm: ppo
+  - stage: scratch
+experiment_name: g1_streaming_100style

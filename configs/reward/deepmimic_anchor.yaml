@@ -1,0 +1,13 @@
+# axis: reward  (PMT plan §9b — reward-as-data; term->weight dict, source: mdp/rewards.py)
+# Standard DeepMimic anchor weight-set (used when the actor obs INCLUDES the
+# privileged motion_anchor_pos_b term).
+weights:
+  motion_global_anchor_pos: 1.0
+  motion_global_anchor_ori: 1.0
+  joint_pos: 1.0
+  joint_vel: 1.0
+  body_pos: 1.0
+  body_ori: 1.0
+  action_rate: -0.01
+  torque: -0.00001
+# TODO(real value): exact term names + weights — mdp/rewards.py + RewardsCfg (plan §7).

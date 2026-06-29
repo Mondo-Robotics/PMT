@@ -1,0 +1,12 @@
+# axis: motion  (PMT plan §2, §7 source: mdp/multi_motion_command.py)
+# Eager multi-clip tracking (the V2 core). One store; sampler/chunk are flags.
+command_class: MultiMotionCommandV2          # registry/duck-typed hint (plan §9b)
+# Default clip dir; the stepping-stone task overrides this with its verified path.
+motion_files: ${paths.MOTION_ROOT}/pmt_stepping_stone   # dir of clip NPZs
+terrain_motion_files: null                   # multi has no separate terrain set
+sampler: bin_adaptive                        # uniform | adaptive | bin_adaptive (§9b)
+storage_mode: eager                          # eager | streaming | packed
+chunk_length: 4000                           # SteppingStoneCommandsCfg chunk_length (spec)
+# Per-motion control rate (§3a dt-from-motion). Terrain-flat clips: dec=4 / dt=0.005.
+decimation: 4
+sim_dt: 0.005

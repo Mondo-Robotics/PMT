@@ -1,0 +1,19 @@
+# axis: network  (PMT plan §2, §3 distillation slice; §4 name==class_name)
+# Vision student-teacher with the latent-anchor head. Pairs ONLY with distillation
+# (compat.SPECS["distillation"].compatible_networks, plan §3b).
+name: VisionStudentTeacher       # registry.NETWORKS key (decorated class)
+# compat_name DERIVED from `name` via registry.NETWORK_COMPAT
+# (@register_network("VisionStudentTeacher", compat_name="vision_student_latent_anchor")).
+# The class is decorated as of Phase 2.2, so the explicit override is removed — the
+# registry is the single source of truth (§3b/§4).
+# hyperparams
+d_model: 256                         # TODO(real value): modules/vision_student_teacher.py
+n_layers: 4
+n_heads: 4
+history_length: 10
+teacher_ckpt: null                   # set by task via ${checkpoints.ss_teacher} (plan §5)
+# --- ablation toggles ---
+use_identity_gate: true
+use_action_residual: true
+# TODO(real value): decorate VisionStudentTeacher with @register_network in Phase 1;
+#   exact head params — vision_student_teacher.py (plan §7).

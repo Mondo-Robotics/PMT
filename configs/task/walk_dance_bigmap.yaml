@@ -1,0 +1,23 @@
+# PMT task — blind transformer teacher on the mocaphouse big_map terrain,
+# trained on the terrain-anchored walk+dance optimized clips (walk_dance1sub2start,
+# 500 clips). This is the SteppingStone task with terrain mesh + motion dir
+# swapped via config (no new env class) — the first REAL training run on PMT.
+defaults:
+  - robot: g1
+  - terrain: big_map
+  - motion: multi
+  - scene: none
+  - sensor: none
+  - obs: transformer_hist
+  - reward: deepmimic_anchor
+  - network: transformer
+  - algorithm: ppo          # runner derived -> on_policy
+  - stage: scratch
+experiment_name: walk_dance_bigmap
+
+# Terrain-anchored walk+dance optimized clips (fps=50, world-placed on the big_map
+# mesh). Relative to ${paths.TERRAIN_MOTION_ROOT} (local DATASET_ROOT/terrain; cluster
+# motions/). Swap to another walk_dance*start dir or pass a list to scale to the full
+# 2000-clip set (consider storage_mode=streaming).
+motion:
+  motion_files: ${paths.TERRAIN_MOTION_ROOT}/terrain_mocaphouse/walk_dance1sub2start/optimized

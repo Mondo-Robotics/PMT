@@ -1,0 +1,33 @@
+# axis: obs  (PMT plan §2, §3a — obs provides base TERMS + obs-GROUP inventory;
+#   the set-name->group-name mapping is DERIVED by derive.derive_obs_groups.)
+# ADD obs: standard policy/critic groups PLUS the two discriminator groups
+# add_disc_obs (mdp.add_disc_obs_agent, 233D) and add_disc_demo (mdp.add_disc_obs_demo,
+# 233D). Source: ADDObservationsCfg (multi_motion_env_cfg.py:431).
+history_length: 1
+# obs GROUP inventory the env exposes (ObservationsCfg group attr names).
+groups:
+  - policy
+  - critic
+  - add_disc_obs
+  - add_disc_demo
+# explicit base set-map: each discriminator set maps 1:1 to its own group; derive
+# fills critic from the same-named group. Mirrors G1AddFlatRunnerCfg.obs_groups
+# (rsl_rl_add_cfg.py:20).
+obs_groups:
+  policy: [policy]
+  critic: [critic]
+  add_disc_obs: [add_disc_obs]
+  add_disc_demo: [add_disc_demo]
+terms:                      # base terms to COMPUTE
+  - command
+  - motion_anchor_pos_b
+  - motion_anchor_ori_b
+  - body_pos
+  - body_ori
+  - base_lin_vel
+  - base_ang_vel
+  - joint_pos
+  - joint_vel
+  - actions
+  - add_disc_obs_agent      # 233D MimicKit global_obs=True discriminator obs
+  - add_disc_obs_demo       # 233D MimicKit global_obs=True demo obs

@@ -1,0 +1,14 @@
+# axis: network  (PMT plan §2, §4 — name == old class_name for ckpt compat)
+# compat_name DERIVED from `name` via registry.NETWORK_COMPAT
+# (@register_network("DiffusionActorCritic", compat_name="diffusion")). Diffusion-based
+# actor-critic policy for Flow Policy Optimization++ (FPO++). Pairs ONLY with the
+# FPOPlus algorithm (compat.SPECS["fpo_plus"] requires network compat_name "diffusion").
+name: DiffusionActorCritic  # registry.NETWORKS key (decorated class)
+# hyperparams (RslRlFpoDiffusionActorCriticCfg defaults)
+actor_hidden_dims: [512, 256, 128]
+critic_hidden_dims: [512, 256, 128]
+activation: elu
+# FPO diffusion-specific parameters
+num_steps: 64             # Number of solver steps for diffusion sampling
+solver_method: euler      # ODE solver: euler, midpoint, heun3
+parameterization: velocity  # Flow parameterization: 'data' or 'velocity'

@@ -1,0 +1,20 @@
+# axis: motion  (PMT plan §2, §3a — the REALIZED dt-from-motion rule)
+# Single backflip clip on the flat plane. The DECISIVE Phase-1 coupling: the control
+# rate is a property of THIS motion profile, not the global default. The old code set
+# decimation=10 / sim.dt=0.002 in __post_init__ of the backflip env subclass
+# (distill_stepping_stone_env_cfg.py:1095-1096). In PMT those values live HERE on the
+# motion axis and flow through the builder (build_env_cfg reads motion.decimation /
+# motion.sim_dt -> env_cfg.decimation / env_cfg.sim.dt). This is the §3a dt-from-motion
+# rule made explicit and config-driven (NOT hard-coded in a subclass).
+command_class: MultiMotionCommandV2
+# Profile-driven backflip clip(s): local -> single verified clip; cluster -> 722-clip
+# optimized dir (motions/terrain_mocaphouse/back_flip_merged/optimized). See paths.yaml.
+motion_files: ${paths.BACKFLIP_MOTION}
+terrain_motion_files: null
+sampler: bin_adaptive
+storage_mode: eager
+chunk_length: 4000
+# Per-motion control rate (§3a dt-from-motion). BACKFLIP = dec=10 / dt=0.002 (vs the
+# terrain-flat default 4 / 0.005). This is the field the GATE B asserts came from config.
+decimation: 10
+sim_dt: 0.002

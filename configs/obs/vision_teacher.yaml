@@ -1,0 +1,30 @@
+# axis: obs  (PMT plan §2, §3 — vision teacher / ppo-finetune obs)
+# Vision teacher keeps the privileged motion anchor AND exteroception. Because the
+# anchor term IS present, the standard (non-fair) anchor reward weights are derived (§3a).
+history_length: 10
+# obs GROUP inventory the env exposes (vision teacher / ppo-finetune).
+# TODO(real value, plan §7): rsl_rl_transformer_ppo_cfg.py:652 ObservationsCfg group attrs.
+groups:
+  - policy
+  - critic
+  - proprio
+  - proprio_history
+  - command_window
+  - vision
+obs_groups:
+  policy: [policy, proprio]
+  critic: [critic]
+  policy_history: [proprio_history]
+  command_window: [command_window]
+  vision: [vision]
+terms:
+  - base_lin_vel
+  - base_ang_vel
+  - projected_gravity
+  - joint_pos
+  - joint_vel
+  - last_action
+  - height_scan
+  - motion_anchor_pos_b     # present → standard deepmimic_anchor weights (§3a)
+  - motion_anchor_ori_b
+# TODO(real value): exact term list — rsl_rl_transformer_ppo_cfg.py:281/652/955 (plan §7).

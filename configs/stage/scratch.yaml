@@ -1,0 +1,7 @@
+# axis: stage  (PMT plan §2, §7 source: runner-cfg deltas)
+# Train from scratch — no warmup freeze, no checkpoint load.
+lr: 1.0e-3                    # TODO(real value): rl_cfg.py (plan §7)
+warmup_freeze_iters: 0
+reset_action_std_on_load: false
+teacher_mix_start: null       # not applicable to scratch
+teacher_mix_end: null

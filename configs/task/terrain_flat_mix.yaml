@@ -1,0 +1,18 @@
+# PMT task (plan §9b Phase 2.3b) — was TerrainFlatMix-G1-v0 family.
+# ONE shared transformer policy trained on a mixture of terrain-anchored clips
+# (big-map mesh, zero reset noise/origin) + flat clips (shifted to the (90,0,0) flat
+# patch, with reset noise). Uses the flexible UnifiedMotionCommandV2 with per-clip
+# {origin + noise} — NOT a hard env partition (GroupedMultiMotionCommandV2 is now
+# optional/legacy).
+defaults:
+  - robot: g1
+  - terrain: terrain_flat_mix
+  - motion: grouped_terrain_flat
+  - scene: none
+  - sensor: none
+  - obs: transformer_hist
+  - reward: deepmimic_anchor
+  - network: transformer
+  - algorithm: ppo          # runner derived -> on_policy
+  - stage: scratch
+experiment_name: terrain_flat_mix

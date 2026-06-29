@@ -1,0 +1,18 @@
+# axis: motion  (PMT plan §2, §3 — paired optimized/raw stepping-stone clips)
+# Teacher reads the OPTIMIZED clips (cmd "motion"); the student reads the RAW clips
+# (cmd "student_motion") synced to the teacher. The env's pair_motion_files matches
+# them by relative path / basename. Source: DEFAULT_STEPPING_STONE_*_MOTION_PATHS
+# (distill_stepping_stone_env_cfg.py:85).
+command_class: MultiMotionCommandV2          # + SyncedStudentMultiMotionCommandV2 (paired)
+# Relative to ${paths.TERRAIN_MOTION_ROOT} (local DATASET_ROOT/terrain; cluster motions/).
+# DATA-GATED ON CLUSTER: stepping-stone clips not yet on the NAS (see cluster_yaml/README.md).
+motion_files: ${paths.TERRAIN_MOTION_ROOT}/terrain_positive_stepping_stone_with_stairs/walk1_subject1_stair/optimized
+raw_motion_files: ${paths.TERRAIN_MOTION_ROOT}/terrain_positive_stepping_stone_with_stairs/walk1_subject1_stair/raw
+terrain_motion_files: null
+sampler: bin_adaptive
+storage_mode: eager
+chunk_length: 4000
+paired: true
+# Per-motion control rate (§3a). Terrain clips: dec=4 / dt=0.005.
+decimation: 4
+sim_dt: 0.005

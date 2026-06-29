@@ -1,0 +1,13 @@
+# axis: network  (PMT plan §2, §3 ppo-finetune slice; §4 name==class_name)
+# compat_name DERIVED from `name` via registry.NETWORK_COMPAT
+# (@register_network("VisionTransformerActorCritic", compat_name="vision_transformer")).
+name: VisionTransformerActorCritic   # registry.NETWORKS key (decorated class)
+# hyperparams
+d_model: 256                         # TODO(real value): modules/vision_transformer_actor_critic.py
+n_layers: 4
+n_heads: 4
+history_length: 10
+# --- ablation toggles (plan §3b: ablations are network field toggles + --multirun) ---
+use_identity_gate: true              # latent-anchor identity gate (NoIdentityGate ablation)
+use_action_residual: true            # action residual head (NoResidual ablation)
+# TODO(real value): exact latent-anchor head params — vision_transformer_actor_critic.py (plan §7)

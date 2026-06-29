@@ -1,0 +1,10 @@
+# axis: network  (PMT plan §2, §4 — name == old class_name for ckpt compat)
+# compat_name DERIVED from `name` via registry.NETWORK_COMPAT
+# (@register_network("ActorCritic", compat_name="mlp")). Plain MLP actor-critic
+# used by ADD (the discriminator rides on separate obs sets, not the policy net).
+name: ActorCritic        # registry.NETWORKS key (decorated class)
+# hyperparams (ADD spec: rsl_rl_add_cfg.py:31 actor/critic [1024,512,512,256] elu)
+actor_hidden_dims: [1024, 512, 512, 256]
+critic_hidden_dims: [1024, 512, 512, 256]
+activation: elu
+init_noise_std: 0.05

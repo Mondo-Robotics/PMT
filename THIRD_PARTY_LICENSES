@@ -1,0 +1,76 @@
+THIRD-PARTY LICENSES AND ATTRIBUTION
+====================================
+
+PMT incorporates, derives from, or vendors code from several upstream
+projects. PMT's own original code is released under the BSD 3-Clause License
+(see the LICENSE file). The third-party components below retain their original
+licenses, and those licenses govern the corresponding files regardless of
+PMT's own license.
+
+>>> IMPORTANT NON-COMMERCIAL RESTRICTION <<<
+The vendored BFM-Zero code (see entry 4) is licensed under CC BY-NC 4.0
+(Creative Commons Attribution-NonCommercial 4.0 International). NonCommercial
+means it MAY NOT be used for commercial purposes. Because this code is bundled
+in the repository, the repository as distributed is, as a combined work,
+usable for NON-COMMERCIAL / research purposes only. To use PMT commercially you
+must remove the `motion_tracking_rl/bfm_zero/_vendor/` tree and
+`motion_tracking_rl/networks/ode_solver.py`, and avoid the FB-CPR-Aux /
+BFM-Zero code paths.
+
+
+1. rsl_rl
+-----------------------------------------------------------------------------
+   Source     : https://github.com/leggedrobotics/rsl_rl
+   License    : BSD 3-Clause License
+   Copyright  : (c) 2021-2025, ETH Zurich and NVIDIA CORPORATION & AFFILIATES
+   Used in    : motion_tracking_rl/ (algorithms, runners, env, networks,
+                modules, storage, utils) -- PMT's RL core is a renamed and
+                extended fork of rsl_rl. Files retain SPDX BSD-3-Clause headers.
+
+
+2. Isaac Lab
+-----------------------------------------------------------------------------
+   Source     : https://github.com/isaac-sim/IsaacLab
+   License    : BSD 3-Clause License
+   Copyright  : (c) 2022-2025, The Isaac Lab Project Developers
+                (https://github.com/isaac-sim/IsaacLab/blob/main/CONTRIBUTORS.md)
+   Used in    : pmt_tasks/isaaclab_rl/ and related task/config glue. Files
+                retain SPDX BSD-3-Clause headers.
+
+
+3. whole_body_tracking
+-----------------------------------------------------------------------------
+   Source     : https://github.com/HybridRobotics/whole_body_tracking
+   License    : MIT License
+   Copyright  : (c) 2024, The Isaac Lab Project Developers
+   Used in    : Task/environment structure that PMT reorganizes, and
+                pmt_tasks/utils/terrain.py (derived).
+
+
+4. BFM-Zero (humanoidverse) -- Meta Platforms  [NON-COMMERCIAL]
+-----------------------------------------------------------------------------
+   Source     : https://github.com/LeCAR-Lab/BFM-Zero  (humanoidverse package)
+   Src commit : b87916f52d3d9e6eeba484f5e80851a235191837
+   License    : CC BY-NC 4.0 (Creative Commons Attribution-NonCommercial 4.0
+                International) -- https://creativecommons.org/licenses/by-nc/4.0/
+   Copyright  : (c) Meta Platforms, Inc. and affiliates.
+   Used in    : motion_tracking_rl/bfm_zero/_vendor/   (vendored verbatim
+                subset -- the FB-CPR-Aux agent import closure)
+                motion_tracking_rl/networks/ode_solver.py
+   NOTE       : NonCommercial. See the repository-level restriction above.
+                Retain this attribution if redistributing.
+
+
+5. Preferred Networks
+-----------------------------------------------------------------------------
+   Source     : Preferred Networks, Inc.
+   Copyright  : (c) 2020 Preferred Networks, Inc.
+   Used in    : motion_tracking_rl/networks/layers/normalization.py (portions),
+                alongside the BSD-3-Clause header from rsl_rl.
+
+
+Full license texts
+-------------------
+- BSD 3-Clause : see the LICENSE file in this repository.
+- MIT          : https://opensource.org/license/mit
+- CC BY-NC 4.0 : https://creativecommons.org/licenses/by-nc/4.0/legalcode

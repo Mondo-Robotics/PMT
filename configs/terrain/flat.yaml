@@ -1,0 +1,5 @@
+# axis: terrain  (PMT plan §2, §7 source: tracking_env_cfg.py)
+type: flat
+mesh_path: null        # flat plane is generated, no mesh asset
+# TODO(real value): flat-patch origin offset FLAT_ORIGIN=(90,0,0) is a derived
+#   reset/origin concern (plan §3a, terrain_flat_mix_env_cfg.py), not a static field.

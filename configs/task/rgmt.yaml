@@ -1,0 +1,16 @@
+# Paper-faithful RGMT deploy task on a flat plane.
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: multi_bin_adaptive
+  - scene: none
+  - sensor: none
+  - obs: paper_transformer_hist
+  - reward: deepmimic_anchor
+  - network: transformer
+  - algorithm: ppo
+  - stage: scratch
+
+experiment_name: rgmt
+motion:
+  motion_files: ${paths.MULTIMOTION_FLAT_MOTION}

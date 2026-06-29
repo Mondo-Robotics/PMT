@@ -1,0 +1,12 @@
+# axis: motion  (PMT plan §2, §3 — distillation self-pair single command)
+# Distillation pairs teacher/student on the SAME command (self-pair): the
+# student observes vision+proprio, the teacher the blind state, of one clip set.
+command_class: MultiMotionCommandV2          # self-paired at runner level (plan §3b)
+motion_files: ${paths.MOTION_ROOT}/pmt_stepping_stone
+terrain_motion_files: null
+sampler: uniform
+storage_mode: eager
+chunk_length: 0
+paired: true                                 # teacher/student read the same clip
+# TODO(real value): self-pair wiring — distillation_runner.py:31,481,487 (plan §3b);
+#   memory note "terrain-flat-streaming-distill" (self-pair single command).

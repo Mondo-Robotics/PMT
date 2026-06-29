@@ -1,0 +1,47 @@
+# axis: motion — BASELINE for the adaptive-sampling A/B. IDENTICAL to
+# multi_adaptive_sampling.yaml (same datasets, same streaming working set + swap, same
+# control rate) EXCEPT every advanced sampling knob is ZEROED. With all hybrid weights
+# off (error=0, prior strength=0, retention=0, top-k=1, global age=0, uncertainty=0,
+# hard-buffer=0) the HybridBinSampler reduces BIT-FOR-BIT to the previous bin_adaptive
+# (per-bin failure-rate-only) sampler — verified by the Phase-0 parity tests. So a run
+# of this baseline vs multi_adaptive_sampling.yaml differs ONLY in the sampling signal.
+command_class: AdaptiveSamplingMotionCommand
+
+motion_files:
+  - /data/mondo-training-dataset/whole_body_tracking_motions/motions/sonic
+  - ${oc.env:PMT_SNAP_ROOT,${paths.SONIC_ROOT}/snap/snap_robot}
+terrain_motion_files: null
+
+sampler: hybrid
+storage_mode: hybrid
+chunk_length: 0
+decimation: 4
+sim_dt: 0.005
+
+max_working_set: 0
+num_load_workers: 16
+use_process_pool: false
+
+# ---- ALL sampling signals OFF => behaves as the previous bin_adaptive method ----
+# Phase 1: composite tracking-error -> off (pure failure-rate difficulty).
+hybrid_error_weight: 0.0
+hybrid_failure_weight: 1.0
+hybrid_error_good: 0.0
+hybrid_error_bad: 1.0
+# Phase 2: offline prior -> off.
+offline_prior_path: ""
+offline_prior_strength: 0.0
+# Phase 3: anti-forgetting -> off (max-bin motion score, uniform floor only).
+hybrid_retention_ratio: 0.0
+hybrid_topk_motion: 1
+hybrid_topk_motion_weight: 0.0
+hybrid_retention_success_thresh: 0.85
+global_age_ratio: 0.0
+global_age_tau: 10.0
+# Phase 4: uncertainty + hard-buffer -> off.
+hybrid_uncertainty_weight: 0.0
+hybrid_uncertainty_gate_lo: 0.2
+hybrid_uncertainty_gate_hi: 0.8
+hybrid_uncertainty_norm: 1.0
+hybrid_hard_buffer_ratio: 0.0
+hybrid_hard_buffer_k: 256

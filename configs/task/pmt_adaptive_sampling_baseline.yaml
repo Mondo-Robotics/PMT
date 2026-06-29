@@ -1,0 +1,19 @@
+# A/B BASELINE for PMT-AdaptiveSampling. Same env/obs/network/PPO + same streaming over
+# the full sonic + snap_robot corpus + same swap cadence as pmt_adaptive_sampling, but
+# the motion axis zeroes every sampling signal so the sampler == previous bin_adaptive
+# (failure-rate-only). The ONLY difference vs pmt_adaptive_sampling is the sampling method.
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: multi_adaptive_sampling_baseline
+  - scene: none
+  - sensor: none
+  - obs: paper_transformer_hist
+  - reward: deepmimic_anchor
+  - network: transformer
+  - algorithm: ppo
+  - stage: scratch
+
+experiment_name: pmt_adaptive_sampling_baseline
+
+motion_resample_frequency: 50

@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+*.egg-info/
+logs/
+exported_models/
+wandb/
+.pytest_cache/
+.DS_Store

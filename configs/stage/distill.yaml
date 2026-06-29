@@ -1,0 +1,7 @@
+# axis: stage  (PMT plan §2/§3a — distillation stage; teacher-mix schedule)
+lr: 5.0e-4                    # TODO(real value): distillation_cfg.py (plan §7)
+warmup_freeze_iters: 0
+reset_action_std_on_load: false
+teacher_mix_start: 1.0        # start fully on teacher action
+teacher_mix_end: 0.0          # anneal to student
+# TODO(real value): exact teacher_mix schedule — distillation_runner.py (plan §7).

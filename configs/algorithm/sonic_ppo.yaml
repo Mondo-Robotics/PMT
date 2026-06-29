@@ -1,0 +1,29 @@
+# axis: algorithm  (PMT plan §2, §3b — runner derived -> on_policy)
+# compat_name DERIVED from `name` via registry.ALGORITHM_COMPAT
+# (@register_algorithm("PPO", compat_name="ppo")). SONIC trains with PPO plus
+# official UniversalTokenModule auxiliary losses:
+# loss = ppo_loss + aux_loss_scale * sum(coef_i * aux_i).
+name: PPO                 # registry.ALGORITHMS key (decorated class)
+rnd: false
+symmetry: false
+recurrent: false
+# hyperparams (verified from G1SonicPPORunnerCfg.algorithm).
+value_loss_coef: 1.0
+use_clipped_value_loss: true
+clip_param: 0.2
+entropy_coef: 0.01
+aux_loss_scale: 1.0
+aux_loss_coef:
+  g1_recon: 0.01
+  g1_smpl_latent: 1.0
+  g1_teleop_latent: 1.0
+  teleop_smpl_latent: 1.0
+  reencoded_smpl_g1_latent: 1.0
+num_learning_epochs: 5
+num_mini_batches: 4
+learning_rate: 1.0e-3
+schedule: adaptive
+gamma: 0.99
+lam: 0.95
+desired_kl: 0.01
+max_grad_norm: 1.0

@@ -1,0 +1,23 @@
+# task: stepping-stone teacher->student distillation (PMT-Distill-SteppingStone-G1-v0)
+# Phase-2.2 (plan §6 Phase 2). The simplest distillation task: a blind/privileged
+# StudentTeacher pair on the stepping-stone terrain with a PAIRED command (optimized
+# clips -> teacher cmd "motion"; raw clips -> student cmd "student_motion"). Runner
+# derived -> distillation (DistillationRunner). Source: G1SteppingStoneDistillEnvCfg
+# (distill_stepping_stone_env_cfg.py:489) + G1SteppingStoneDistillRunnerCfg
+# (rsl_rl_distill_cfg.py:241).
+#
+# GATE: teacher_ckpt is None (no local stepping-stone teacher; the flat teacher is
+# arch-incompatible). The teacher is random-init so the distillation LOSS is
+# meaningless — this validates the RUNNER PATH end-to-end, not the result.
+defaults:
+  - robot: g1
+  - terrain: stepping_stone
+  - motion: stepping_stone_paired
+  - scene: none
+  - sensor: height_scan
+  - obs: distill_stepping_stone
+  - reward: deepmimic_anchor
+  - network: student_teacher
+  - algorithm: distillation   # runner derived → distillation
+  - stage: distill
+experiment_name: g1_stepping_stone_distill

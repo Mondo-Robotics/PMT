@@ -1,0 +1,35 @@
+# axis: obs  (PMT plan §2, §3 — stepping-stone distillation teacher/student obs)
+# Teacher group reads the OPTIMIZED clip (cmd "motion", privileged); the student
+# policy group reads the RAW clip (cmd "student_motion") + height_scan exteroception.
+# Auxiliary motion_target / anchor_target groups carry the teacher-vs-student deltas
+# the StudentTeacher aux heads regress. Source: DistillSteppingStoneObservationsCfg
+# (distill_stepping_stone_env_cfg.py:357).
+history_length: 10
+# obs GROUP inventory the env exposes (ObservationsCfg group attr names).
+groups:
+  - teacher
+  - policy
+  - critic
+  - motion_target
+  - anchor_target
+# set-map: policy -> student group, teacher -> teacher group (required obs sets for
+# the distillation spec). Mirrors G1SteppingStoneDistillRunnerCfg.obs_groups.
+obs_groups:
+  policy: [policy]
+  teacher: [teacher]
+  critic: [critic]
+terms:
+  - command
+  - sonic_robot_motion
+  - motion_anchor_ori_b
+  - motion_anchor_pos_b
+  - body_pos
+  - body_ori
+  - base_lin_vel
+  - base_ang_vel
+  - joint_pos
+  - joint_vel
+  - actions
+  - height_scan             # student exteroception (from sensor: height_scan)
+  - sonic_robot_motion_delta   # motion_target aux group
+  - motion_anchor_delta_b      # anchor_target aux group

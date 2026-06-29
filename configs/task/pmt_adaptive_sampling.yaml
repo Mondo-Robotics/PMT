@@ -1,0 +1,20 @@
+# PMT flat-plane deploy task with the ADAPTIVE-SAMPLING (hybrid) streaming command
+# over the full sonic + snap_robot corpus. Uses the standalone PMT transformer
+# observation/action stack with AdaptiveSamplingMotionCommand (Phases 0-4).
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: multi_adaptive_sampling
+  - scene: none
+  - sensor: none
+  - obs: pmt_transformer_hist
+  - reward: deepmimic_anchor
+  - network: transformer
+  - algorithm: ppo
+  - stage: scratch
+
+experiment_name: pmt_adaptive_sampling
+
+# Swap the streaming working set periodically (iters). Enables the runner's
+# fold->sample->load + forced_reset cadence and the global curriculum.
+motion_resample_frequency: 50

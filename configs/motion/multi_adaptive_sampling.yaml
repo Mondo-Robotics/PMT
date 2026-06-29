@@ -1,0 +1,54 @@
+# axis: motion — adaptive-sampling (hybrid) streaming over the FULL sonic + snap_robot
+# corpus on the FLAT plane. Uses the AdaptiveSamplingMotionCommand (Phases 0-4):
+# streaming working set + hybrid bin sampler (failure + composite tracking-error +
+# offline freq/jerk prior + retention/age anti-forgetting + success-gated uncertainty +
+# adversarial hard-buffer). Per §3a flat control rate dec=4/dt=0.005.
+command_class: AdaptiveSamplingMotionCommand
+
+# Both robot datasets (human_* subdirs are auto-excluded by find_motion_files).
+motion_files:
+  - /data/mondo-training-dataset/whole_body_tracking_motions/motions/sonic
+  - ${oc.env:PMT_SNAP_ROOT,${paths.SONIC_ROOT}/snap/snap_robot}
+terrain_motion_files: null
+
+sampler: hybrid
+storage_mode: hybrid
+chunk_length: 0          # ragged streaming store -> no chunking
+decimation: 4
+sim_dt: 0.005
+
+# Streaming working set (resident unique clips). 0 -> num_envs.
+max_working_set: 0
+num_load_workers: 16
+use_process_pool: false
+
+# ---- Phase 1: composite tracking-error difficulty (on) ----
+hybrid_error_weight: 0.35
+hybrid_failure_weight: 0.5
+# Normalized composite error mapped to [0,1] difficulty over [good, bad] (metres+rad scale).
+hybrid_error_good: 0.02
+hybrid_error_bad: 0.4
+
+# ---- Phase 2: offline frequency/jerk/biomech prior ----
+# Precompute once with scripts/precompute_motion_prior.py (bin_duration MUST match the
+# sampler's: motion_fps*bin_duration). Empty path / strength 0 disables.
+offline_prior_path: ${oc.env:PMT_ADAPTIVE_PRIOR,${paths.DATASET_ROOT}/adaptive_prior_sonic_snap.pt}
+offline_prior_strength: 8.0
+
+# ---- Phase 3: anti-forgetting ----
+hybrid_retention_ratio: 0.2
+hybrid_topk_motion: 3
+hybrid_topk_motion_weight: 0.3
+hybrid_retention_success_thresh: 0.85
+global_age_ratio: 0.2
+global_age_tau: 10.0
+
+# ---- Phase 4: uncertainty + adversarial hard-buffer ----
+hybrid_uncertainty_weight: 0.15
+hybrid_uncertainty_gate_lo: 0.2
+hybrid_uncertainty_gate_hi: 0.8
+# action-std normalizer: divide mean action-std by this to land ~[0,1]. Tune to the
+# policy's typical std (G1 PPO ~0.3-1.0); 1.0 is a safe conservative default.
+hybrid_uncertainty_norm: 1.0
+hybrid_hard_buffer_ratio: 0.1
+hybrid_hard_buffer_k: 256

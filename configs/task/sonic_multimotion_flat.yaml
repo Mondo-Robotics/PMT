@@ -1,0 +1,26 @@
+# task: SONIC MultiMotion V2 flat  (was SONIC-G1-MultiMotionV2-Flat-v0)
+# Phase-2.2 (plan §6 Phase 2). SonicActorCritic (dual robot/human encoder + FSQ
+# token + control/motion decoder) on the flat plane with the V2 multi-motion
+# command, paired human motion, and the SONIC encoder obs groups. Source:
+# SonicG1MultiMotionV2EnvCfg (multi_motion_env_cfg.py:773) + G1SonicPPORunnerCfg
+# (rsl_rl_sonic_ppo_cfg.py:382). GATE config trains the encoders from SCRATCH (no
+# external ONNX), so it runs standalone on local paired robot/human lafan clips.
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: sonic_robot_human
+  - scene: none
+  - sensor: none
+  - obs: sonic
+  - reward: deepmimic_anchor
+  - network: sonic
+  - algorithm: sonic_ppo     # runner derived → on_policy
+  - stage: scratch
+experiment_name: g1_sonic_flat
+sonic_mode: scratch
+
+# Profile-driven motion dir (cluster has NO motions/debug/robot_lafan1): local ->
+# ${MOTION_ROOT}/lafan_walk; cluster -> sonic/lafan1/robot_lafan1 (40 paired clips,
+# human_lafan1 sibling auto-loaded). load_human_motion stays true (from motion axis).
+motion:
+  motion_files: ${paths.MULTIMOTION_FLAT_MOTION}

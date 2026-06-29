@@ -1,0 +1,13 @@
+# axis: network  (PMT plan §2/§3b) — VisionTransformer ABLATION BASE.
+# All architecture-ablation field flips (Type II) are expressed as overrides of
+# THIS base via Hydra defaults-inheritance (the *_no_*.yaml variants below) OR via
+# a --multirun dotlist sweep on these exact fields. name == registered class_name.
+name: VisionTransformerActorCritic   # registry.NETWORKS key, compat_name=vision_transformer
+d_model: 256
+n_layers: 4
+n_heads: 4
+history_length: 10
+# --- ablation field toggles (the thesis: ablations = config field flips) ---
+use_action_residual: true            # NoResidual ablation flips -> false
+use_identity_gates: true             # NoIdentityGate ablation flips -> false
+use_map_proprio_cross_attention: false  # MapProprioCross ablation flips -> true

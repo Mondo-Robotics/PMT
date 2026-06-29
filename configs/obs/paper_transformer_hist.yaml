@@ -1,0 +1,20 @@
+# Paper-faithful RGMT observation axis for the deploy task.
+# Actor policy observations are proprio only; base_lin_vel is critic-only.
+history_length: 10
+groups:
+  - policy
+  - proprio
+  - proprio_history
+  - command_window
+  - critic
+obs_groups:
+  policy: [proprio]
+  critic: [critic]
+  policy_history: [proprio_history]
+  command_window: [command_window]
+terms:
+  - proprio
+  - command_window
+  - reference_base_height
+  - body_link_pose
+  - base_lin_vel

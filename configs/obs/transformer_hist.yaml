@@ -1,0 +1,32 @@
+# axis: obs  (PMT plan §2, §3a — obs provides base TERMS + obs-GROUP inventory;
+#   the set-name->group-name mapping is DERIVED by derive.derive_obs_groups,
+#   mirroring the real resolve_obs_groups (sonic_rsl_rl/utils/utils.py:238-340).)
+# Proprio + motion-tracking terms with a history window for the transformer.
+history_length: 10          # Isaac Lab ObsTerm.history_length (plan §9b: 1-vs-10 is a param)
+# obs GROUP inventory the env will expose (ObservationsCfg group attr names).
+# TODO(real value, plan §7): populated from the env's ObservationsCfg group attrs at
+#   Phase-1 real-env wiring (rsl_rl_transformer_ppo_cfg.py:208).
+groups:
+  - policy
+  - critic
+  - proprio_history
+  - command_window
+# optional explicit base set-map (real env cfgs ship this dict verbatim,
+# e.g. rsl_rl_transformer_ppo_cfg.py:208); derive fills the rest (critic/teacher/...)
+# via the resolver's rule (same-named group else copy policy). When omitted, derive
+# synthesizes {"policy": ["policy"]}.
+obs_groups:
+  policy: [policy]
+  critic: [critic]
+  policy_history: [proprio_history]
+  command_window: [command_window]
+terms:                      # base terms to COMPUTE (used by reward coupling, §3a)
+  - base_lin_vel
+  - base_ang_vel
+  - projected_gravity
+  - joint_pos
+  - joint_vel
+  - last_action
+  - motion_anchor_pos_b     # presence drives anchor-coupled reward weights (§3a)
+  - motion_anchor_ori_b
+# TODO(real value): exact term list — mdp/observations.py + *ObservationsCfg (plan §7).

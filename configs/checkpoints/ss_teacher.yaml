@@ -1,0 +1,9 @@
+# axis: checkpoint  (PMT plan §5 — named prior run)
+# The big_map BLIND TRANSFORMER teacher, distilled into the vision student.
+# REAL teacher (2026-06-25): PMT-WalkDanceBigMap-G1-v0 trained to 20k iters on the
+# big_map mesh + walk_dance1sub2start/optimized (500 clips), reward 84.46,
+# policy_class=TransformerActorCritic — matches VisionStudentTeacher's teacher_class_name.
+# CKPT_ROOT resolves per profile (for example, $PMT_DATA_ROOT/logs/rsl_rl).
+# NB: fixed on-disk artifact from the completed teacher run (val_teacher_walkdance_bigmap).
+run_dir: ${paths.CKPT_ROOT}/val_teacher_walkdance_bigmap/2026-06-25_15-07-11_16gpu-8192env-20k
+checkpoint: model_19999.pt

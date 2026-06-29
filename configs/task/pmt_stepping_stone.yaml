@@ -1,0 +1,24 @@
+# PMT task (plan §3) — was SteppingStone-G1-v0
+# Blind transformer teacher trained from scratch on stepping-stone terrain.
+defaults:
+  - robot: g1
+  - terrain: stepping_stone
+  - motion: multi
+  - scene: none
+  - sensor: none
+  - obs: transformer_hist
+  - reward: deepmimic_anchor
+  - network: transformer
+  - algorithm: ppo          # runner derived -> on_policy
+  - stage: scratch
+experiment_name: pmt_stepping_stone
+
+# Stepping-stone-specific motion clip dir (verified locally, stepping_stone_env_cfg.py:39
+# LOCAL_STEPPING_STONE_MOTION_PATHS). Relative to ${paths.TERRAIN_MOTION_ROOT}
+# (local DATASET_ROOT/terrain; cluster motions/).
+# DATA-GATED ON CLUSTER: these stepping-stone optimized clips are NOT yet on the NAS
+# (only terrain_mocaphouse/walk_dance* is present). Upload them under
+# ${paths.MOTION_ROOT}/terrain_positive_stepping_stone_with_stairs/... before training
+# (see cluster_yaml/README.md).
+motion:
+  motion_files: ${paths.TERRAIN_MOTION_ROOT}/terrain_positive_stepping_stone_with_stairs/walk1_subject1_stair/optimized

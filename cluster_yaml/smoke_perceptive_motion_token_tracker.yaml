@@ -1,0 +1,25 @@
+config_version: 1
+cluster: huoshan
+
+num_gpus: 1
+
+shared_workspace: "<CLUSTER_WORKSPACE>/PMT"
+pip_packages: ["tensordict", "wandb", "hydra-core", "omegaconf"]
+pip_directories: []
+py_modules: []
+py_paths: ["<CLUSTER_WORKSPACE>/PMT"]
+log_folder: "logs"
+os_env_vars:
+  PYTORCH_CUDA_ALLOC_CONF: "expandable_segments:True"
+  PMT_PROFILE: "cluster"
+  WHOLE_BODY_TRACKING_ASSET_DIR: "<WHOLE_BODY_TRACKING_REPO>/source/whole_body_tracking/whole_body_tracking/assets"
+  OMNI_KIT_ACCEPT_EULA: "YES"
+
+# 1-GPU smoke for the from-scratch PerceptiveMotionTokenTracker (PMT decoder +
+# tokenizer trained from scratch; no PMT ckpt needed). Motion resolves (cluster) to
+# the same stepping-stone optimized dir (walk1_subject1_stair/optimized, 1000 npz).
+tasks:
+  - name: PMT-PerceptiveMotionTokenTracker-G1-v0
+    type: "md_rl.train"
+    entry_module: "<CLUSTER_WORKSPACE>/PMT/scripts/submit/train_pmt.py"
+    args: ["--task", "PMT-PerceptiveMotionTokenTracker-G1-v0", "--num_envs", "16", "--max_iterations", "3", "--experiment_name", "pmt_smoke_perceptive_motion_token_tracker", "--run_name", "smoke-1gpu", "--seed", "42", "--headless"]

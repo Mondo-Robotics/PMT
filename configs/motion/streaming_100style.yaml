@@ -1,0 +1,14 @@
+# axis: motion — streaming store on the LARGE 100style set (1620 clips) so the
+# working-set swap is genuinely exercised (max_working_set << total clips).
+command_class: StreamingMultiMotionCommand
+# cluster: sonic/100style/robot_100style (1620 clips, recursive); local fallback lafan_walk.
+motion_files: ${paths.SONIC_ROOT}/100style/robot_100style
+terrain_motion_files: null
+sampler: bin_adaptive
+storage_mode: streaming
+max_working_set: 256          # << 1620 -> resident set must swap during training
+num_load_workers: 8
+use_process_pool: false
+chunk_length: 0
+decimation: 4
+sim_dt: 0.005

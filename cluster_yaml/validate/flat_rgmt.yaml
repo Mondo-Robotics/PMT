@@ -1,0 +1,28 @@
+config_version: 1
+cluster: huoshan
+
+num_gpus: 1
+
+shared_workspace: "<CLUSTER_WORKSPACE>/PMT"
+pip_packages: ["tensordict", "wandb", "hydra-core", "omegaconf"]
+pip_directories: []
+py_modules: []
+py_paths: ["<CLUSTER_WORKSPACE>/PMT"]
+log_folder: "logs"
+os_env_vars:
+  PYTORCH_CUDA_ALLOC_CONF: "expandable_segments:True"
+  PMT_PROFILE: "cluster"
+  PMT_DATA_ROOT: "<WHOLE_BODY_TRACKING_REPO>"
+  PMT_MOTION_ROOT: "<CLUSTER_DATA_ROOT>/motions"
+  PMT_DATASET_ROOT: "<CLUSTER_DATA_ROOT>"
+  PMT_SONIC_ROOT: "<CLUSTER_DATA_ROOT>/sonic"
+  PMT_CKPT_ROOT: "<CLUSTER_WORKSPACE>/PMT/logs/rsl_rl"
+  WHOLE_BODY_TRACKING_ASSET_DIR: "<WHOLE_BODY_TRACKING_REPO>/source/whole_body_tracking/whole_body_tracking/assets"
+  OMNI_KIT_ACCEPT_EULA: "YES"
+
+# Validation: 8192 envs/GPU * 1 GPU, 20000 iters.
+tasks:
+  - name: RGMT-G1-v0
+    type: "md_rl.train"
+    entry_module: "<CLUSTER_WORKSPACE>/PMT/scripts/submit/train_pmt.py"
+    args: ["--task", "RGMT-G1-v0", "--num_envs", "8192", "--max_iterations", "20000", "--distributed", "true", "--experiment_name", "val_rgmt_flat", "--run_name", "1gpu-8192env-20k", "--seed", "42", "--headless"]

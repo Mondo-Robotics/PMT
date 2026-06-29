@@ -1,0 +1,30 @@
+# axis: obs  (PMT plan §2, §3a — SONIC cross-embodiment obs)
+# SONIC adds two encoder obs GROUPS on top of the deploy-aligned policy/critic:
+#   robot_encoder (mdp.sonic_robot_motion, 580D, cmd "motion")
+#   human_encoder (mdp.sonic_human_motion, 660D, cmd "motion")
+# The SonicActorCritic reads obs["robot_encoder"]/obs["human_encoder"] directly
+# from the full obs dict (not via obs_groups), so obs_groups only carries
+# policy/critic. Source: SonicMultiMotionV2ObservationsCfg (multi_motion_env_cfg.py:682).
+# PMT does not expose the official FK-space g1_kin target, so the SONIC recon aux
+# loss reconstructs this 580D robot_encoder motion-command vector in decoder space.
+# Deploy alignment drops policy.motion_anchor_pos_b + policy.base_lin_vel.
+history_length: 1
+# obs GROUP inventory the env exposes (ObservationsCfg group attr names).
+groups:
+  - policy
+  - critic
+  - robot_encoder
+  - human_encoder
+# base set-map: policy/critic 1:1 (SonicActorCritic gets encoder groups from obs).
+obs_groups:
+  policy: [policy]
+  critic: [critic]
+terms:                      # base terms to COMPUTE
+  - command
+  - motion_anchor_ori_b     # policy.motion_anchor_pos_b dropped (deploy align)
+  - base_ang_vel            # policy.base_lin_vel dropped (deploy align)
+  - joint_pos
+  - joint_vel
+  - actions
+  - sonic_robot_motion      # robot_encoder group (580D)
+  - sonic_human_motion      # human_encoder group (660D)

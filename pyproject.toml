@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pmt"
+version = "0.0.0"
+description = "PMT: config-driven motion-tracking RL (motion_tracking_rl is the renamed RL core)."
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["motion_tracking_rl*"]

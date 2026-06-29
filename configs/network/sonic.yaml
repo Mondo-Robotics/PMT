@@ -1,0 +1,45 @@
+# axis: network  (PMT plan §2, §4 — name == old class_name for ckpt compat)
+# compat_name DERIVED from `name` via registry.NETWORK_COMPAT
+# (@register_network("SonicActorCritic", compat_name="sonic")).
+# SONIC universal control policy: named robot/human encoders -> FSQ tokens ->
+# control + motion decoders. Source: official gear_sonic UniversalTokenModule.
+name: SonicActorCritic        # registry.NETWORKS key (decorated class)
+# encoder/decoder sizes and token shape mirror official all_mlp_v1.yaml.
+init_noise_std: 0.05
+min_action_std: 0.001
+max_action_std: 0.5
+action_encoder_source: robot          # robot | human | hybrid | auto | mode
+detach_action_token: true
+decoder_proprio_layout: none
+control_decoder_input_order: proprio_token
+robot_encoder_layout: raw             # raw | g1_onnx_repack
+train_robot_encoder: true
+train_human_encoder: true
+train_hybrid_encoder: false
+# GATE: scratch (no external ONNX). Pretrained paths None, load flags False so the
+# encoder/decoder weights are random-init and no model_*.onnx file is needed.
+pretrained_encoder_onnx_path: null
+pretrained_decoder_onnx_path: null
+load_pretrained_robot_encoder: false
+load_pretrained_human_encoder: false
+load_pretrained_hybrid_encoder: false
+load_pretrained_control_decoder: false
+strict_pretrained_shapes: false
+actor_hidden_dims: [4096, 4096, 2048, 2048, 1024, 1024, 512, 512]
+critic_hidden_dims: [4096, 4096, 2048, 2048, 1024, 1024, 512, 512]
+encoder_hidden_dims: [2048, 1024, 512, 512]
+motion_decoder_hidden_dims: [2048, 1024, 512, 512]
+latent_dim: 64
+num_fsq_levels: 32
+fsq_level_list: 32
+max_num_tokens: 2
+reencode_smpl_g1_recon: true
+aux_loss_coef:
+  g1_recon: 0.01
+  g1_smpl_latent: 1.0
+  g1_teleop_latent: 1.0
+  teleop_smpl_latent: 1.0
+  reencoded_smpl_g1_latent: 1.0
+robot_motion_dim: 580         # 10 frames * (29 pos + 29 vel)
+human_motion_dim: 660         # 10 frames * (22 joints * 3)
+activation: silu

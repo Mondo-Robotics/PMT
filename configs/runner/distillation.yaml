@@ -1,0 +1,4 @@
+# axis: runner  (PMT plan §3b — name == registry.RUNNERS key)
+# Distillation cannot run in the on-policy runner (different storage init,
+# teacher/student pairing). Derived from algorithm distillation (plan §3b).
+name: distillation       # registry.RUNNERS key

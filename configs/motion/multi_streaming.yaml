@@ -1,0 +1,20 @@
+# axis: motion  (PMT plan §2, §9b — storage_mode=streaming selects the flexible
+#   StreamingMultiMotionCommand, NOT a bespoke env class. Source:
+#   mdp/streaming_motion_command.py StreamingMultiMotionCommandV2Cfg + streaming_motion_lib.py.)
+# Memory-bounded multi-clip tracking: the command builds a FlatMotionStore that holds
+# only `max_working_set` resident clips and swaps the working set during training.
+# Mirrors the old G1MultiMotionV2StreamingEnvCfg (multi_motion_env_cfg.py:346) which
+# replaces the base command with StreamingMultiMotionCommandV2Cfg.
+command_class: StreamingMultiMotionCommand
+motion_files: ${paths.MOTION_ROOT}/lafan_walk
+terrain_motion_files: null
+sampler: bin_adaptive
+storage_mode: streaming
+# streaming-specific (StreamingMultiMotionCommandV2Cfg). 0 -> num_envs resident clips.
+max_working_set: 0
+num_load_workers: 4
+use_process_pool: false
+# streaming forces fp16 + ragged (chunk_length=0) internally; left here for clarity.
+chunk_length: 0
+decimation: 4
+sim_dt: 0.005

@@ -1,0 +1,7 @@
+# axis: network — Type-I ablation: SplitMLP architecture.
+# Equivalent --multirun: network.architecture=split_mlp.
+name: VisionAblationActorCritic
+architecture: split_mlp              # <-- FLIPPED
+feature_dim: 128
+map_height: 17
+map_width: 11

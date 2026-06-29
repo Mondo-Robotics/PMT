@@ -1,0 +1,11 @@
+# axis: motion  (PMT plan §2 — sampler is a MOTION-axis param, not a new env class)
+# Eager multi-clip tracking with the (frame-level) ADAPTIVE sampler. Mirrors the old
+# G1MultiMotionV2AdaptiveEnvCfg (sampler_type="adaptive", multi_motion_env_cfg.py:295).
+command_class: MultiMotionCommandV2
+motion_files: ${paths.MOTION_ROOT}/lafan_walk
+terrain_motion_files: null
+sampler: adaptive
+storage_mode: eager
+chunk_length: 4000
+decimation: 4
+sim_dt: 0.005

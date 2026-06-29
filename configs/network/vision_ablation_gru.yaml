@@ -1,0 +1,10 @@
+# axis: network — GRU ablation is a CLASS SELECTION (NOT a pure field flip).
+# It selects the registered RECURRENT class (different class_name) rather than
+# flipping the `architecture` field. Same compat axis (vision_ablation), so it
+# composes/validates identically; PPO supports recurrent -> on_policy runner.
+name: VisionAblationRecurrentActorCritic
+architecture: flat_mlp
+rnn_type: gru
+rnn_hidden_dim: 256
+rnn_num_layers: 1
+feature_dim: 128

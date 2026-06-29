@@ -1,0 +1,19 @@
+# axis: motion  (PMT plan §2, §3 — paired optimized/raw walk_dance big_map clips)
+# Teacher reads the OPTIMIZED clips (cmd "motion"); the student reads the RAW clips
+# (cmd "student_motion") synced to the teacher. The env's pair_motion_files matches
+# optimized<->raw by canonical key (suffix-stripped basename). Same source as the
+# big_map teacher (walk_dance1sub2start), so the distill student learns to track the
+# clips the teacher mastered (reward 84.46).
+command_class: MultiMotionCommandV2          # + SyncedStudentMultiMotionCommandV2 (paired)
+# Relative to ${paths.TERRAIN_MOTION_ROOT} (local DATASET_ROOT/terrain; cluster motions/).
+# 500 optimized + 500 raw clips, basenames pair 1:1 (verified).
+motion_files: ${paths.TERRAIN_MOTION_ROOT}/terrain_mocaphouse/walk_dance1sub2start/optimized
+raw_motion_files: ${paths.TERRAIN_MOTION_ROOT}/terrain_mocaphouse/walk_dance1sub2start/raw
+terrain_motion_files: null
+sampler: bin_adaptive
+storage_mode: eager
+chunk_length: 4000
+paired: true
+# Per-motion control rate (§3a). Terrain clips: dec=4 / dt=0.005.
+decimation: 4
+sim_dt: 0.005

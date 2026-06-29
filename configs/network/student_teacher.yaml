@@ -1,0 +1,18 @@
+# axis: network  (PMT plan §2, §4 — name == old class_name for ckpt compat)
+# compat_name DERIVED from `name` via registry.NETWORK_COMPAT
+# (@register_network("StudentTeacher", compat_name="student_teacher")).
+# Teacher/student MLP pair for distillation. Source: RslRlDistillationStudentTeacherCfg
+# (distillation_cfg.py:21) + G1SteppingStoneDistillRunnerCfg.policy (rsl_rl_distill_cfg.py:268).
+name: StudentTeacher          # registry.NETWORKS key (decorated class)
+init_noise_std: 0.01
+student_obs_normalization: true
+teacher_obs_normalization: true
+student_hidden_dims: [1024, 512, 256, 128]
+teacher_hidden_dims: [1024, 512, 256, 128]
+activation: elu
+# FALLBACK (gate): None -> random-init teacher (proves the runner path; loss
+# meaningless). Real teacher ckpt is a Phase-2-later TODO (no local stepping-stone
+# teacher exists; the flat teacher is arch-incompatible).
+teacher_ckpt: null
+motion_target_obs_key: motion_target
+anchor_target_obs_key: anchor_target

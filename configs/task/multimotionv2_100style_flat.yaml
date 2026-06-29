@@ -1,0 +1,16 @@
+# task: MultiMotion V2 flat, 100STYLE dataset  (new: G1-MultiMotionV2-100style-Flat-v0)
+# Same plane MLP actor-critic path as multimotionv2_flat — only the DATA differs: it
+# trains on the 1620-clip 100style robot dataset (nested style subdirs, recursively
+# discovered). Reuses the multimotionv2_flat env+agent builders (same obs/network/algo).
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: multi_100style
+  - scene: none
+  - sensor: none
+  - obs: proprio
+  - reward: deepmimic_anchor
+  - network: mlp
+  - algorithm: ppo          # runner derived → on_policy
+  - stage: scratch
+experiment_name: g1_multi_motion_flat_100style

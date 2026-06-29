@@ -1,0 +1,12 @@
+# axis: network — Type-II ablation: NoResidual (use_action_residual flipped off).
+# Self-contained copy of vision_transformer.yaml with ONE field flipped (the PMT
+# manual composer loads group yamls flat, so variants are explicit, not nested
+# defaults). Equivalent --multirun: network.use_action_residual=false.
+name: VisionTransformerActorCritic
+d_model: 256
+n_layers: 4
+n_heads: 4
+history_length: 10
+use_action_residual: false           # <-- FLIPPED (NoResidual)
+use_identity_gates: true
+use_map_proprio_cross_attention: false

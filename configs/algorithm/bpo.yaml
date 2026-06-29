@@ -1,0 +1,24 @@
+# axis: algorithm  (PMT plan §2, §4 — name == registry.ALGORITHMS key)
+# compat_name DERIVED from `name` via registry.ALGORITHM_COMPAT
+# (@register_algorithm("BPO", compat_name="bpo")). BPO extends PPO and swaps the
+# clipped policy objective for a bounded-ratio regression objective. compat.SPECS["bpo"]
+# pairs with {mlp,transformer,vision_transformer,sonic} on the on_policy runner.
+# Source: rsl_rl_bpo_cfg.py:G1FlatMultiMotionBPORunnerCfg + rl_cfg.py:RslRlBpoAlgorithmCfg.
+name: BPO                # registry.ALGORITHMS key (decorated class, old class_name)
+# feature flags (validated against compat.SPECS, plan §3b)
+rnd: false              # BPO inherits PPO's spec: rnd/symmetry/recurrent supported, off here
+symmetry: false
+recurrent: false
+# hyperparams (rsl_rl_bpo_cfg.py)
+learning_rate: 1.0e-3
+gamma: 0.99
+lam: 0.95
+num_learning_epochs: 4
+num_mini_batches: 3
+# BPO-specific (RslRlBpoAlgorithmCfg)
+reg_w: 0.01
+use_median: false
+online_adv: true
+loss_type: adv_TV
+tv_loss_coef: 0.0
+bpo_advantage_clip: 10.0

@@ -1,0 +1,13 @@
+# axis: algorithm  (PMT plan §2, §4 — name == registry.ALGORITHMS key)
+# compat_name DERIVED from `name` via registry.ALGORITHM_COMPAT
+# (@register_algorithm("PPO", compat_name="ppo")) — no redundant YAML field (prereq #7).
+name: PPO                # registry.ALGORITHMS key (decorated class, old class_name)
+# feature flags (validated against compat.SPECS, plan §3b)
+rnd: false               # PPO supports rnd; off by default
+symmetry: false
+recurrent: false
+# hyperparams
+learning_rate: 1.0e-3    # TODO(real value): isaaclab_rl/rsl_rl/rl_cfg.py (plan §7)
+gamma: 0.99
+lam: 0.95
+num_learning_epochs: 5

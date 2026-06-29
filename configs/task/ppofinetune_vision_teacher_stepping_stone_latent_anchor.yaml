@@ -1,0 +1,29 @@
+# PMT task (plan §3, P3) — PPO-finetune the DISTILLED vision student (latent anchor).
+# Third stage of teacher -> distill -> finetune. Single motion command (NOT the paired
+# teacher/student of distill), vision obs (height_scan), VisionTransformerActorCritic
+# policy, on-policy PPO, initialized from the distilled-student checkpoint.
+#
+# Runs on the SAME big_map mesh + walk_dance1sub2start optimized clips as the teacher
+# (walk_dance_bigmap) and distill (distill_stepping_stone_latent_anchor) stages, so the
+# finetune sharpens the policy on the clips it was distilled to track.
+defaults:
+  - robot: g1
+  - terrain: big_map
+  - motion: multi
+  - scene: none
+  - sensor: height_scan
+  - obs: vision_teacher
+  - reward: deepmimic_anchor
+  - network: vision_transformer_latent_anchor
+  - algorithm: ppo          # runner derived -> on_policy
+  - stage: finetune
+experiment_name: ppoft_vt_ss_latent_anchor
+
+# Single-command optimized walk_dance clips (same source as the teacher/distill stages).
+# Relative to ${paths.TERRAIN_MOTION_ROOT}.
+motion:
+  motion_files: ${paths.TERRAIN_MOTION_ROOT}/terrain_mocaphouse/walk_dance1sub2start/optimized
+
+# Warm-start the finetune policy from the distilled vision student (resolved by builder).
+network:
+  base_policy_ckpt: ${checkpoints.distilled_student}

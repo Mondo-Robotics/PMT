@@ -1,0 +1,24 @@
+# PMT task (plan §6 Phase 2.5) — PMT-PerceptiveMotionTokenTracker-G1-v0.
+# Token-tracker PPO PRETRAIN: trains the PMT decoder + tokenizer FROM SCRATCH
+# (pmt_only_mode, require_pmt_checkpoint=false) on the big_map terrain.
+# This is the un-gated gate target — no pretrained-PMT checkpoint blocker.
+defaults:
+  - robot: g1
+  - terrain: big_map
+  - motion: multi
+  - scene: none
+  - sensor: none
+  - obs: perceptive_motion_token
+  - reward: deepmimic_anchor
+  - network: perceptive_motion_token_tracker
+  - algorithm: ppo          # runner derived -> on_policy
+  - stage: scratch
+experiment_name: g1_perceptive_motion_token_tracker_pmt_pretrain
+
+# Terrain-anchored walk_dance clips on the big_map mesh. The old repo pairs PMT with
+# PERCEPTIVE_BIG_MAP_TERRAIN_MESH = g1_29dof_big_map.stl, and walk_dance1sub1start is
+# TERRAIN-anchored (body_pos_w[0] ~ (+15,+14)) so it MUST sit on big_map (matches the
+# terrain: big_map mesh above). Stepping-stone clips are not on the NAS; walk_dance is.
+# Relative to ${paths.TERRAIN_MOTION_ROOT} (local DATASET_ROOT/terrain; cluster motions/).
+motion:
+  motion_files: ${paths.TERRAIN_MOTION_ROOT}/terrain_mocaphouse/walk_dance1sub1start/optimized

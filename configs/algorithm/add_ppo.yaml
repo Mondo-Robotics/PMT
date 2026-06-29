@@ -1,0 +1,38 @@
+# axis: algorithm  (PMT plan §2, §3b — runner derived → on_policy)
+# compat_name DERIVED from `name` via registry.ALGORITHM_COMPAT
+# (@register_algorithm("ADDPPO", compat_name="add_ppo")). ADD = PPO + a discriminator
+# on global-frame state observations (agent vs demo). compat.SPECS["add_ppo"] requires
+# obs sets {policy, critic, add_disc_obs, add_disc_demo} and rejects rnd/symmetry/recurrent.
+name: ADDPPO             # registry.ALGORITHMS key (decorated class, old class_name)
+# feature flags (validated against compat.SPECS, plan §3b)
+rnd: false
+symmetry: false
+recurrent: false
+# hyperparams (rsl_rl_add_cfg.py:36 / rl_cfg.py:427)
+learning_rate: 1.0e-3
+gamma: 0.99
+lam: 0.95
+num_learning_epochs: 5
+# discriminator config (the values the runner cfg carries; surfaced here as data)
+disc_obs_group: add_disc_obs
+disc_demo_group: add_disc_demo
+disc_hidden_dims: [1024, 512]
+disc_activation: relu
+# Blended reward: total = task_reward_weight * deepmimic_tracking + disc_reward_weight * disc_reward.
+# task_reward_weight=0.0 is PURE adversarial (discriminator only). This MATCHES the proven
+# external ADD reference run from 2026-02-10 (_iter1), which trained 40k iters at 0.0.
+# ADD's reward scale is single-digit BY DESIGN — the
+# earlier "low reward ~4" was the expected ADD scale, not a bug. Blending task reward (0.25/0.5)
+# deviated from the reference recipe; reverted to 0.0.
+task_reward_weight: 0.0   # MATCH working reference run (2026-02-10 ADD): pure-disc.
+disc_reward_weight: 1.0
+disc_reward_scale: 2.0
+disc_batch_size: 2
+disc_epochs: 2
+disc_learning_rate: 2.5e-4
+disc_replay_buffer_size: 200000
+disc_replay_samples: 1000
+disc_loss_weight: 1.0
+disc_logit_reg: 0.01
+disc_grad_penalty: 2.0
+disc_weight_decay: 1.0e-4

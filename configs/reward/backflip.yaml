@@ -1,0 +1,16 @@
+# axis: reward  (PMT plan §9b — reward-as-data; term->weight dict)
+# Back-flip rewards: the SteppingStone tracking weight-set (anchor pos/ori + foot
+# pos/vel + lateral-contact) PLUS the knee negative-power safety term. Mirror of
+# BackFlipMergedRewardsCfg (distill_stepping_stone_env_cfg.py:988): knee_negative_power
+# = negative_joint_power_l2(weight=-10, knee joints, deadband=150, power_norm=500).
+weights:
+  motion_global_anchor_pos: 1.0
+  motion_body_ori: 0.5
+  motion_foot_pos: 1.0
+  motion_foot_lin_vel: 0.5
+  feet_lateral_contact: -0.03
+  knee_negative_power: -10.0
+# NOTE: the knee_negative_power term itself is defined structurally in the BackFlip
+# env cfg (BackFlipRewardsCfg) because it needs the joint SceneEntityCfg + deadband/
+# power_norm params (not expressible as a scalar weight alone). This weight-set is the
+# data overlay; the term's PRESENCE is the GATE B assertion.

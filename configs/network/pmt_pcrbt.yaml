@@ -1,0 +1,25 @@
+# axis: network  (PMT plan §2/§4 — name == registered class_name for ckpt compat)
+# compat_name DERIVED via registry.NETWORK_COMPAT
+# (@register_network("PerceptiveResidualBehaviorTokenTracker",
+#  compat_name="perceptive_motion_token_tracker")). Reuses the existing compat axis
+# (plan-review C1) so the ppo algorithm spec stays valid with no compat.py edit.
+name: PerceptiveResidualBehaviorTokenTracker
+# P-CaRBT (FSQ behavior tokenizer) hyperparams — the actual policy cfg is built by
+# pmt_tasks.agent_cfgs.perceptive_residual_behavior_token (this YAML is the
+# composition-axis selector; the builder uses the agent cfg).
+future_motion_len: 21
+num_motion_tokens: 4
+motion_token_dim: 64
+model_dim: 128
+token_num_heads: 4
+history_embedding_dim: 128
+# FSQ behavior-tokenizer knobs (feasibility: plain FSQ, single residual level).
+fsq_levels: [8, 8, 8, 5, 5]
+num_residual_levels: 1
+use_phase_head: false
+# from-scratch gate knobs (no pretrained PMT ckpt; pmt_only_mode skips the adapter).
+pmt_only_mode: true
+freeze_pmt: false
+require_pmt_checkpoint: false
+require_height_scan: false
+adapter_mode: no_adapter

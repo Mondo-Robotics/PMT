@@ -1,0 +1,14 @@
+# axis: motion  (PMT plan §2, §7 source: mdp/multi_motion_command.py)
+# SINGLE-CLIP flat motion tracking for FPO++ training. Uses MultiMotionCommandV2 with
+# a single clip from the profile-driven flat motion directory (same as multimotionv2_flat).
+# The sampler/storage config is identical to multi_bin_adaptive; the ENV runs one clip.
+command_class: MultiMotionCommandV2
+# Profile-driven single-clip source (cluster/local have different flat motion sets)
+motion_files: ${paths.MULTIMOTION_FLAT_MOTION}
+terrain_motion_files: null
+sampler: bin_adaptive
+storage_mode: eager
+chunk_length: 4000
+# Per-motion control rate (§3a dt-from-motion). flat = dec=4 / dt=0.005.
+decimation: 4
+sim_dt: 0.005

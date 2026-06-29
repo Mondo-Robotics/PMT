@@ -1,0 +1,23 @@
+# task: MultiMotion V2 flat (base)  (was G1-MultiMotionV2-Flat-v0)
+# Phase-2.1 (plan §6 Phase 2.1). Standard MLP actor-critic on the flat plane, eager
+# multi-clip V2 command with the bin-adaptive sampler (the base default). Source:
+# G1MultiMotionV2EnvCfg (multi_motion_env_cfg.py:167) + G1FlatMultiMotionPPORunnerCfg.
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: multi_bin_adaptive
+  - scene: none
+  - sensor: none
+  - obs: proprio
+  - reward: deepmimic_anchor
+  - network: mlp
+  - algorithm: ppo          # runner derived → on_policy
+  - stage: scratch
+experiment_name: g1_multi_motion_flat
+
+# Profile-driven motion dir (the tail differs local-vs-cluster, so it is a full-path
+# root): local -> ${MOTION_ROOT}/lafan_walk; cluster -> sonic/lafan1/robot_lafan1 (40
+# paired clips). Overrides the multi_bin_adaptive default so this Phase-2.1 cluster
+# target trains on real cluster data without a bespoke cluster task yaml.
+motion:
+  motion_files: ${paths.MULTIMOTION_FLAT_MOTION}

@@ -1,0 +1,17 @@
+# PMT task — PMT-PCaRBT-100style-G1-v0.
+# P-CaRBT (FSQ behavior-token tracker) on the LARGE 1620-clip 100style flat dataset.
+# Same env/network/agent as pmt_pcrbt — ONLY the motion dataset differs (more, bigger
+# plane motions). Single-stage PPO; resumable from the lafan1 model_9999.pt (identical
+# obs/network signature — clip count does not change obs dims).
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: multi_100style
+  - scene: none
+  - sensor: none
+  - obs: pmt_transformer_hist
+  - reward: deepmimic_anchor
+  - network: pmt_pcrbt
+  - algorithm: ppo          # runner derived -> on_policy
+  - stage: scratch
+experiment_name: g1_pcrbt_flat_100style

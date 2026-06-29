@@ -1,0 +1,27 @@
+config_version: 1
+cluster: huoshan
+
+num_gpus: 4
+
+shared_workspace: "<CLUSTER_WORKSPACE>/PMT"
+pip_packages: ["tensordict", "wandb", "hydra-core", "omegaconf"]
+pip_directories: []
+py_modules: []
+py_paths: ["<CLUSTER_WORKSPACE>/PMT"]
+log_folder: "logs"
+os_env_vars:
+  PYTORCH_CUDA_ALLOC_CONF: "expandable_segments:True"
+  PMT_PROFILE: "cluster"
+  WHOLE_BODY_TRACKING_ASSET_DIR: "<WHOLE_BODY_TRACKING_REPO>/source/whole_body_tracking/whole_body_tracking/assets"
+  OMNI_KIT_ACCEPT_EULA: "YES"
+
+# P-CaRBT first-phase feasibility run: FSQ behavior-token tracker (PerceptiveResidual
+# BehaviorTokenTracker), PPO pretrain FROM SCRATCH (pmt_only_mode, no PMT ckpt) on the
+# FLAT plane with the paired SONIC lafan1 robot clips (40 clips, cluster-resolved
+# .../sonic/lafan1/robot_lafan1). Single-stage = the first-phase policy.
+# --num_envs is the PER-GPU env count -> 4096 * 4 = 16384 total.
+tasks:
+  - name: PMT-PCaRBT-G1-v0
+    type: "md_rl.train"
+    entry_module: "<CLUSTER_WORKSPACE>/PMT/scripts/submit/train_pmt.py"
+    args: ["--task", "PMT-PCaRBT-G1-v0", "--num_envs", "4096", "--max_iterations", "10000", "--distributed", "true", "--experiment_name", "pmt_pcrbt_flat", "--run_name", "4gpu-4096env", "--seed", "42", "--headless"]

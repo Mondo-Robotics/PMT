@@ -1,0 +1,21 @@
+# task: back-flip on big_map  (per-task decimation/dt coupling, plan §3a)
+# Phase-1 widened slice (plan §6): exercises the §3a dt-from-motion rule — the control
+# rate (dec=10 / dt=0.002) flows from the motion axis through the builder, NOT a
+# hard-coded subclass field. Reuses the transformer obs stack + PPO from scratch,
+# with the SteppingStone+knee-negative-power reward set.
+# TERRAIN: the cluster back_flip_merged/optimized clips are TERRAIN-anchored on the
+# big_map mesh (verified: body_pos_w[0] ~ (+17,-3.5), NOT origin). Old repo pairs them
+# with BACK_FLIP_MERGED_TERRAIN_MESH = g1_29dof_big_map.stl. So terrain MUST be big_map,
+# not a flat plane (a plane would train against the wrong physics geometry).
+defaults:
+  - robot: g1
+  - terrain: big_map
+  - motion: backflip        # dec=10 / dt=0.002 live here (§3a)
+  - scene: none
+  - sensor: none
+  - obs: transformer_hist
+  - reward: backflip
+  - network: transformer
+  - algorithm: ppo          # runner derived → on_policy
+  - stage: scratch
+experiment_name: g1_backflip_bigmap

@@ -1,0 +1,28 @@
+config_version: 1
+cluster: huoshan
+
+num_gpus: 8
+
+shared_workspace: "<CLUSTER_WORKSPACE>/PMT"
+pip_packages: ["tensordict", "wandb", "hydra-core", "omegaconf"]
+pip_directories: []
+py_modules: []
+py_paths: ["<CLUSTER_WORKSPACE>/PMT"]
+log_folder: "logs"
+os_env_vars:
+  PYTORCH_CUDA_ALLOC_CONF: "expandable_segments:True"
+  PMT_PROFILE: "cluster"
+  WHOLE_BODY_TRACKING_ASSET_DIR: "<WHOLE_BODY_TRACKING_REPO>/source/whole_body_tracking/whole_body_tracking/assets"
+  OMNI_KIT_ACCEPT_EULA: "YES"
+
+# REAL ADD re-train matching the PROVEN working reference run
+# (<MD_RL_LOG_ROOT>/ADD/2026-02-10_12-54-22_iter1):
+# PURE discriminator reward (task_reward_weight=0.0), disc_reward_weight 1.0,
+# disc_reward_scale 2.0, disc_loss_weight 2.0, 40000 iters. ADD's single-digit reward
+# scale is BY DESIGN — the earlier "low reward ~4" was the expected ADD scale, not a bug;
+# blending a task reward (0.25/0.5) deviated from the reference recipe. 8 GPU * 4096 = 32768 envs.
+tasks:
+  - name: PMT-ADD-MultiMotionV2-Flat-v0
+    type: "md_rl.train"
+    entry_module: "<CLUSTER_WORKSPACE>/PMT/scripts/submit/train_pmt.py"
+    args: ["--task", "PMT-ADD-MultiMotionV2-Flat-v0", "--num_envs", "4096", "--max_iterations", "40000", "--distributed", "true", "--experiment_name", "pmt_add_puredisc_ref", "--run_name", "8gpu-40k", "--seed", "42", "--headless"]

@@ -1,0 +1,29 @@
+# axis: obs  (PMT plan §2, §3 — distillation student obs)
+# Student sees proprio + exteroception (height-scan) but NOT the privileged anchor.
+# Dropping motion_anchor_pos_b is what fires the "no_anchor_fair" reward weight-set
+# in the old code (plan §3a, _match_old_no_anchor_fair_reward_weights ~1056).
+history_length: 10
+# obs GROUP inventory (student exposes proprio + vision groups; teacher group is
+# the privileged supervision set used by the distillation runner's default "teacher" set).
+# TODO(real value, plan §7): distill_stepping_stone_env_cfg.py ObservationsCfg group attrs.
+groups:
+  - policy
+  - teacher
+  - proprio_history
+  - vision
+obs_groups:
+  policy: [policy]
+  policy_history: [proprio_history]
+  vision: [vision]
+  # teacher set NOT listed -> derive fills it from the same-named "teacher" group
+  # (distillation_runner.py:61 default_sets=["teacher"]).
+terms:
+  - base_lin_vel
+  - base_ang_vel
+  - projected_gravity
+  - joint_pos
+  - joint_vel
+  - last_action
+  - height_scan             # student exteroception (from sensor: height_scan)
+  # NOTE: motion_anchor_pos_b intentionally absent → derives no_anchor_fair reward (§3a)
+# TODO(real value): exact student term list — distill_stepping_stone_env_cfg.py (plan §7).

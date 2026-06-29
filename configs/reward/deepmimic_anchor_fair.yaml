@@ -1,0 +1,16 @@
+# axis: reward  (PMT plan §3a/§9b — the "no_anchor_fair" weight-set)
+# Used when the actor obs DROPS motion_anchor_pos_b (the student case): the old
+# _match_old_no_anchor_fair_reward_weights() rebalances so the comparison is fair.
+# This is the SAME term set as deepmimic_anchor with rebalanced magnitudes — the
+# choice between the two is itself derivable from obs (plan §3a), but kept selectable.
+weights:
+  motion_global_anchor_pos: 1.0
+  motion_global_anchor_ori: 1.0
+  joint_pos: 1.5            # rebalanced vs standard (fair w/o privileged anchor obs)
+  joint_vel: 1.0
+  body_pos: 1.5
+  body_ori: 1.5
+  action_rate: -0.01
+  torque: -0.00001
+# TODO(real value): exact fair weights — _match_old_no_anchor_fair_reward_weights()
+#   in distill_stepping_stone_env_cfg.py ~1056 (plan §3a/§7).

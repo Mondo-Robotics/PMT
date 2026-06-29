@@ -1,0 +1,26 @@
+# axis: obs  (PMT plan §2, §3a — obs provides base TERMS + obs-GROUP inventory;
+#   the set-name->group-name mapping is DERIVED by derive.derive_obs_groups.)
+# Plain proprio + motion-tracking obs for the standard MLP multi-motion flat env
+# (no discriminator, no vision). Source: TrackingEnvCfg.ObservationsCfg (the base
+# policy/critic groups used by G1MultiMotionV2EnvCfg, multi_motion_env_cfg.py:167).
+history_length: 1
+# obs GROUP inventory the env exposes (ObservationsCfg group attr names).
+groups:
+  - policy
+  - critic
+# base set-map: policy/critic 1:1 onto the same-named groups (mirrors
+# G1FlatMultiMotionPPORunnerCfg's implicit {policy,critic} obs_groups).
+obs_groups:
+  policy: [policy]
+  critic: [critic]
+terms:                      # base terms to COMPUTE
+  - command
+  - motion_anchor_pos_b     # present -> standard deepmimic_anchor weights (§3a)
+  - motion_anchor_ori_b
+  - body_pos
+  - body_ori
+  - base_lin_vel
+  - base_ang_vel
+  - joint_pos
+  - joint_vel
+  - actions

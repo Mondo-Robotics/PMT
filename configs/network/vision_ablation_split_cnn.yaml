@@ -1,0 +1,7 @@
+# axis: network — Type-I ablation: SplitCNN architecture.
+# Equivalent --multirun: network.architecture=split_cnn.
+name: VisionAblationActorCritic
+architecture: split_cnn              # <-- FLIPPED
+feature_dim: 128
+map_height: 17
+map_width: 11

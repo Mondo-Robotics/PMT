@@ -1,0 +1,3 @@
+# axis: sensor  (PMT plan §2 note 2 — sensor changes scene+obs shape+net input dim)
+type: none
+# blind policy: no exteroception. Used by the stepping-stone teacher (scratch).

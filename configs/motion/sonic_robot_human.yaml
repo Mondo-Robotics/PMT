@@ -1,0 +1,14 @@
+# axis: motion  (PMT plan §2, §3 — SONIC paired robot/human clips)
+# SONIC needs paired human motion: the loader replaces 'robot_' -> 'human_' in the
+# clip dir to find the human npz (multi_motion_command.py:236). The local
+# robot_lafan1 dir has a paired human_lafan1 sibling, so load_human_motion works.
+command_class: MultiMotionCommandV2
+motion_files: ${paths.MOTION_ROOT}/debug/robot_lafan1   # paired w/ debug/human_lafan1
+terrain_motion_files: null
+sampler: uniform
+storage_mode: eager
+chunk_length: 4000
+load_human_motion: true
+# Per-motion control rate (§3a). Flat clips: dec=4 / dt=0.005.
+decimation: 4
+sim_dt: 0.005

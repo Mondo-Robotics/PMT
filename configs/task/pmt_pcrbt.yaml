@@ -1,0 +1,23 @@
+# PMT task — PMT-PCaRBT-G1-v0.
+# P-CaRBT (Perception-Conditioned Contact-Aware Residual Behavior Tokenizer):
+# FSQ behavior-token tracker, PPO PRETRAIN from scratch (pmt_only_mode,
+# require_pmt_checkpoint=false) on the FLAT plane with lafan1 clips. First-phase
+# feasibility run (docs/pcrbt_implementation_plan.md). Reduced OBS: no vision group.
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: multi_bin_adaptive
+  - scene: none
+  - sensor: none
+  - obs: pmt_transformer_hist
+  - reward: deepmimic_anchor
+  - network: pmt_pcrbt
+  - algorithm: ppo          # runner derived -> on_policy
+  - stage: scratch
+experiment_name: g1_pcrbt_flat_pretrain
+
+# Profile-driven flat motion dir (local -> ${MOTION_ROOT}/lafan_walk; cluster ->
+# sonic/lafan1/robot_lafan1). Mirrors multimotionv2_flat.yaml so the cluster feasibility
+# run trains on real lafan1 data without a bespoke cluster task yaml.
+motion:
+  motion_files: ${paths.MULTIMOTION_FLAT_MOTION}

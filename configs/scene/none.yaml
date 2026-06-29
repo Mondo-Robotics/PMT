@@ -1,0 +1,8 @@
+# axis: scene  (PMT plan §2 note 2 / §8.3 — object-interaction scene axis)
+#
+# The DEFAULT scene: no extra scene objects beyond the robot+ground+sensors that
+# the terrain/sensor axes already provide. Selecting scene:none means the env cfg
+# applies NO scene-objects piece, so existing tasks (stepping-stone, multimotion,
+# sonic, terrain-flat-mix, ...) are structurally UNCHANGED (no regression).
+type: none
+num_objects: 0

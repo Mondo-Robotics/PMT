@@ -1,0 +1,14 @@
+# axis: motion  (PMT plan §2, §7 source: mdp/multi_motion_command.py)
+# Eager multi-clip tracking (V2 core) on the FLAT plane with the BIN-ADAPTIVE sampler
+# (the G1MultiMotionV2EnvCfg base default, multi_motion_env_cfg.py:187 sampler_type).
+# Per §3a the control rate is part of the motion axis: flat clips run at dec=4/dt=0.005.
+command_class: MultiMotionCommandV2
+# Default local multi-motion clip dir (CHECKED to exist). The task may override.
+motion_files: ${paths.MOTION_ROOT}/lafan_walk
+terrain_motion_files: null
+sampler: bin_adaptive
+storage_mode: eager
+chunk_length: 4000
+# Per-motion control rate (§3a dt-from-motion). flat = dec=4 / dt=0.005.
+decimation: 4
+sim_dt: 0.005

@@ -1,0 +1,22 @@
+# task: MultiMotion V2 flat, STREAMING store  (was G1-MultiMotionV2-Streaming-Flat-v0)
+# Same env class + PPO runner; the motion-axis storage_mode=streaming makes the command
+# build a memory-bounded StreamingMultiMotionCommand (FlatMotionStore + max_working_set).
+# Realizes plan §9b "TWO command classes" (eager MultiMotionCommandV2 vs streaming) via
+# a config flag, NOT a bespoke env class.
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: multi_streaming
+  - scene: none
+  - sensor: none
+  - obs: proprio
+  - reward: deepmimic_anchor
+  - network: mlp
+  - algorithm: ppo
+  - stage: scratch
+experiment_name: g1_multi_motion_streaming
+
+# Profile-driven motion dir (cluster has NO motions/lafan_walk): local ->
+# ${MOTION_ROOT}/lafan_walk; cluster -> sonic/lafan1/robot_lafan1 (40 paired clips).
+motion:
+  motion_files: ${paths.MULTIMOTION_FLAT_MOTION}

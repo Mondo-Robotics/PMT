@@ -1,0 +1,19 @@
+# task: MultiMotion V2 flat, ADAPTIVE sampler  (was G1-MultiMotionV2-Adaptive-Flat-v0)
+# Same env class + PPO runner as the base; differs only on the motion-axis sampler.
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: multi_adaptive
+  - scene: none
+  - sensor: none
+  - obs: proprio
+  - reward: deepmimic_anchor
+  - network: mlp
+  - algorithm: ppo
+  - stage: scratch
+experiment_name: g1_multi_motion_flat_adaptive
+
+# Profile-driven motion dir (cluster has NO motions/lafan_walk): local ->
+# ${MOTION_ROOT}/lafan_walk; cluster -> sonic/lafan1/robot_lafan1 (40 paired clips).
+motion:
+  motion_files: ${paths.MULTIMOTION_FLAT_MOTION}

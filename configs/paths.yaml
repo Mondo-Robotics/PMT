@@ -1,0 +1,70 @@
+# axis: paths  (PMT plan §5 — roots, profile-selected)
+#
+# We avoid the fragile v1 `${${paths.profile}}` double-interpolation (it did NOT
+# resolve in standalone OmegaConf). Instead this file carries:
+#   - `profile`: selected from $PMT_PROFILE (default "local")
+#   - a `local:` and `cluster:` block, each with concrete roots + relative interps.
+# The builder's `load_paths()` helper picks the active block by `profile` and
+# returns it as the resolved `paths` namespace that group YAMLs reference via
+# ${paths.DATA_ROOT}, ${paths.MOTION_ROOT}, etc.
+#
+# Equivalent in spirit to a Hydra defaults-list `paths: ${oc.env:PMT_PROFILE,local}`,
+# but works without a full Hydra compose() (plan §5: "if that exact interpolation
+# is awkward in standalone OmegaConf ... implement an equivalent").
+
+profile: ${oc.env:PMT_PROFILE,local}
+
+local:
+  DATA_ROOT: ${oc.env:PMT_DATA_ROOT,${oc.env:HOME}/whole_body_tracking}
+  MOTION_ROOT: ${oc.env:PMT_MOTION_ROOT,${.DATA_ROOT}/motions}
+  TERRAIN_ROOT: ${.DATA_ROOT}          # *.stl live at repo root today
+  CKPT_ROOT: ${oc.env:PMT_CKPT_ROOT,${.DATA_ROOT}/logs/rsl_rl}
+  # Shared dataset root holding terrain/SONIC clips. Override with PMT_DATASET_ROOT
+  # when the data lives outside this generic release fallback.
+  DATASET_ROOT: ${oc.env:PMT_DATASET_ROOT,${oc.env:HOME}/whole_body_tracking_motions/motions}
+  # Terrain-anchored clip root. Locally the terrain clips live under DATASET_ROOT/terrain/.
+  # Group/task YAMLs reference ${paths.TERRAIN_MOTION_ROOT}/<dataset>/... so the per-profile
+  # infix difference (local DATASET_ROOT/terrain vs cluster motions/) is absorbed here.
+  TERRAIN_MOTION_ROOT: ${oc.env:PMT_TERRAIN_MOTION_ROOT,${.DATASET_ROOT}/terrain}
+  # SONIC paired robot/human clip root. Locally under DATASET_ROOT/sonic/.
+  SONIC_ROOT: ${oc.env:PMT_SONIC_ROOT,${.DATASET_ROOT}/sonic}
+  # FULL motion dir for the MultiMotionV2-Flat cluster training target. The tail differs
+  # per profile (local lafan_walk vs cluster sonic/lafan1/robot_lafan1), so this is a
+  # full-path root rather than a prefix. Locally it stays under MOTION_ROOT so the
+  # multimotion family test (path startswith whole_body_tracking) still holds.
+  MULTIMOTION_FLAT_MOTION: ${oc.env:PMT_MULTIMOTION_FLAT_MOTION,${.MOTION_ROOT}/lafan_walk}
+  # Backflip clip(s). Local: single verified clip. The tail differs from cluster
+  # (which has a 722-clip optimized dir), so this is a full-path key resolved per profile.
+  BACKFLIP_MOTION: ${oc.env:PMT_BACKFLIP_MOTION,${.MOTION_ROOT}/back_flip/flip_360_001__A304_wbt.npz}
+
+cluster:
+  DATA_ROOT: ${oc.env:PMT_DATA_ROOT,${oc.env:HOME}/pmt_cluster_data/whole_body_tracking}
+  # Plane/single-motion clips (lafan_walk, debug, back_flip, pmt_stepping_stone) live
+  # directly under MOTION_ROOT on the target machine.
+  MOTION_ROOT: ${oc.env:PMT_MOTION_ROOT,${oc.env:HOME}/pmt_cluster_data/motions}
+  # *.stl meshes (positive_stepping_with_stairs.stl, g1_29dof_big_map_with_flat.stl,
+  # scripts/motion_adapter/assets/g1/g1_29dof_big_map.stl) live under DATA_ROOT on the NAS.
+  TERRAIN_ROOT: ${.DATA_ROOT}
+  # PMT training runs (train_pmt.py) write checkpoints under the PMT repo's logs/rsl_rl,
+  # NOT the whole_body_tracking DATA_ROOT. The named checkpoints (configs/checkpoints/*)
+  # — e.g. the stepping-stone teacher used by the latent-anchor distill task —
+  # therefore resolve against the PMT logs dir.
+  CKPT_ROOT: ${oc.env:PMT_CKPT_ROOT,${oc.env:HOME}/pmt_cluster_data/PMT/logs/rsl_rl}
+  # Common parent of the NAS motions/ and sonic/ trees.
+  DATASET_ROOT: ${oc.env:PMT_DATASET_ROOT,${oc.env:HOME}/pmt_cluster_data}
+  # On the cluster the terrain-anchored clips (terrain_mocaphouse/walk_dance*start) sit
+  # directly under motions/ (NO intermediate terrain/ dir), so TERRAIN_MOTION_ROOT == MOTION_ROOT.
+  TERRAIN_MOTION_ROOT: ${oc.env:PMT_TERRAIN_MOTION_ROOT,${.MOTION_ROOT}}
+  # Paired SONIC robot/human clips (lafan1, 100style) live under SONIC_ROOT.
+  SONIC_ROOT: ${oc.env:PMT_SONIC_ROOT,${.DATASET_ROOT}/sonic}
+  # On the cluster the MultiMotionV2-Flat target trains on the paired SONIC lafan1 robot
+  # clips (40 clips). NB: MultiMotionCommandV2 also derives the human_ sibling dir by name
+  # replacement, which exists alongside (sonic/lafan1/human_lafan1).
+  MULTIMOTION_FLAT_MOTION: ${oc.env:PMT_MULTIMOTION_FLAT_MOTION,${.SONIC_ROOT}/lafan1/robot_lafan1}
+  # Backflip TEACHER: the full 722-clip back_flip_merged/optimized set on the big_map
+  # mesh (user-confirmed 2026-06-25). The earlier ~8.5 plateau was NOT a data problem —
+  # it was the full-XYZ ee_body_pos termination firing on ~90% of episodes the instant
+  # the flip swings the end-effectors horizontally. backflip.py now overrides that to the
+  # Z-ONLY check (bad_motion_body_pos_z_only), so the merged set can actually learn the
+  # flip. Same big_map mesh + dec=10/dt=0.002. LOCAL profile BACKFLIP_MOTION is unchanged.
+  BACKFLIP_MOTION: ${oc.env:PMT_BACKFLIP_MOTION,${.MOTION_ROOT}/terrain_mocaphouse/back_flip_merged/optimized}

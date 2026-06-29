@@ -1,0 +1,15 @@
+# axis: motion  (PMT plan §2, §7 source: mdp/multi_motion_command.py)
+# Eager multi-clip tracking (V2 core) on the FLAT plane with the BIN-ADAPTIVE sampler,
+# pointed at the 100STYLE robot clips. 100style is NESTED in style-name subdirs (e.g.
+# Aeroplane/, Akimbo/, ...); find_motion_files recurses, so pointing at robot_100style
+# discovers all clips. SONIC_ROOT resolves per profile or PMT_SONIC_ROOT.
+# Per §3a flat clips run dec=4/dt=0.005.
+command_class: MultiMotionCommandV2
+motion_files: ${paths.SONIC_ROOT}/100style/robot_100style
+terrain_motion_files: null
+sampler: bin_adaptive
+storage_mode: eager
+chunk_length: 4000
+# Per-motion control rate (§3a dt-from-motion). flat = dec=4 / dt=0.005.
+decimation: 4
+sim_dt: 0.005

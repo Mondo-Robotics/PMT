@@ -1,0 +1,21 @@
+# axis: algorithm  (PMT plan §2, §4 — name == registry.ALGORITHMS key)
+# compat_name DERIVED from `name` via registry.ALGORITHM_COMPAT
+# (@register_algorithm("FPOPlus", compat_name="fpo_plus")). FPOPlus extends FPO/PPO
+# with continuous flow matching and pairs ONLY with the diffusion network.
+# compat.SPECS["fpo_plus"] requires network="diffusion", obs sets {"policy","critic"},
+# rejects rnd/symmetry/recurrent.
+# Source: RslRlFpoPlusAlgorithmCfg (rl_cfg.py:350+).
+name: FPOPlus              # registry.ALGORITHMS key (decorated class, old class_name)
+# feature flags (validated against compat.SPECS, plan §3b)
+rnd: false                # FPO+ spec rejects rnd/symmetry/recurrent
+symmetry: false
+recurrent: false
+# hyperparams (RslRlFpoPlusAlgorithmCfg defaults)
+num_learning_epochs: 16
+learning_rate: 1.0e-4
+schedule: fixed
+clip_param: 0.05          # Surrogate trust-region clipping
+use_clipped_value_loss: false
+# FPO-specific parameters
+num_fpo_samples: 16       # Number of (eps, t) samples for CFM loss
+trust_region_mode: aspo   # Trust region method: ppo, spo, aspo

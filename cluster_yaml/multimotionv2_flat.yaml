@@ -1,0 +1,26 @@
+config_version: 1
+cluster: huoshan
+
+num_gpus: 4
+
+shared_workspace: "<CLUSTER_WORKSPACE>/PMT"
+pip_packages: ["tensordict", "wandb", "hydra-core", "omegaconf"]
+pip_directories: []
+py_modules: []
+py_paths: ["<CLUSTER_WORKSPACE>/PMT"]
+log_folder: "logs"
+os_env_vars:
+  PYTORCH_CUDA_ALLOC_CONF: "expandable_segments:True"
+  PMT_PROFILE: "cluster"
+  WHOLE_BODY_TRACKING_ASSET_DIR: "<WHOLE_BODY_TRACKING_REPO>/source/whole_body_tracking/whole_body_tracking/assets"
+  OMNI_KIT_ACCEPT_EULA: "YES"
+
+# Class-B flat plane training: MLP actor-critic, eager multi-clip V2 command with the
+# bin-adaptive sampler. Trains on the paired SONIC lafan1 robot clips (40 clips).
+# motion (cluster-resolved): .../sonic/lafan1/robot_lafan1
+# --num_envs is the PER-GPU env count -> 4096 * 4 = 16384 total.
+tasks:
+  - name: PMT-G1-MultiMotionV2-Flat-v0
+    type: "md_rl.train"
+    entry_module: "<CLUSTER_WORKSPACE>/PMT/scripts/submit/train_pmt.py"
+    args: ["--task", "PMT-G1-MultiMotionV2-Flat-v0", "--num_envs", "4096", "--max_iterations", "10000", "--distributed", "true", "--experiment_name", "pmt_multimotionv2_flat", "--run_name", "4gpu-4096env", "--seed", "42", "--headless"]

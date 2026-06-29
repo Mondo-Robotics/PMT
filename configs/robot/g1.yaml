@@ -1,0 +1,9 @@
+# axis: robot  (PMT plan §2, §7 source: robots/g1.py)
+# Per §3a the decimation/sim_dt that today leak into motion/terrain cfgs belong
+# on the robot (or are derived per-motion). We expose defaults here; per-motion
+# overrides (backflip dec=10/dt=0.002 vs terrain-flat dec=4/dt=0.005) come from
+# the motion axis derivation in Phase 1 (plan §3a, distill_stepping_stone_env_cfg.py:1095).
+name: g1
+decimation: 4          # TODO(real value): robots/g1.py + tracking_env_cfg.py
+sim_dt: 0.005          # TODO(real value): tracking_env_cfg.py sim.dt
+# TODO(real value): actuator stiffness/damping/armature, action_scale — robots/g1.py

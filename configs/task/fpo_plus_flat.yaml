@@ -1,0 +1,21 @@
+# task: FPO++ Single-Clip flat  (PMT-G1-FPOPlus-SingleClip-Flat-v0)
+# Single-clip flat motion tracking trained with the FPOPlus algorithm (flow policy
+# optimization with continuous flow matching). Uses the diffusion network architecture
+# (DiffusionActorCritic) and the same flat environment as BPO/PPO multimotionv2_flat.
+# Source: G1FlatSingleClipFpoPlusRunnerCfg (multi_motion_ppo.py).
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: single_clip
+  - scene: none
+  - sensor: none
+  - obs: proprio
+  - reward: deepmimic_anchor
+  - network: diffusion
+  - algorithm: fpo_plus    # runner derived → on_policy
+  - stage: scratch
+experiment_name: g1_fpo_plus_flat
+
+# Profile-driven motion dir override (same as BPO task)
+motion:
+  motion_files: ${paths.MULTIMOTION_FLAT_MOTION}

@@ -1,0 +1,29 @@
+# axis: obs  (PMT plan §2/§3a) — PMT token-tracker obs.
+# Same proprio + future-motion-window terms as transformer_hist, plus a flat
+# height-scan ``vision`` group exposed as the ``height_scan`` set. The obs_groups
+# map below is the explicit base set-map the PMT env ships verbatim (mirrors
+# distill_stepping_stone_env_cfg.py:285); derive fills critic.
+history_length: 10
+groups:
+  - policy
+  - critic
+  - proprio
+  - proprio_history
+  - command_window
+  - motion_anchor_delta_window
+  - vision
+obs_groups:
+  policy: [policy, proprio]
+  policy_history: [proprio_history]
+  future_motion_window: [command_window, motion_anchor_delta_window]
+  height_scan: [vision]
+  critic: [critic]
+terms:
+  - base_lin_vel
+  - base_ang_vel
+  - projected_gravity
+  - joint_pos
+  - joint_vel
+  - last_action
+  - motion_anchor_pos_b
+  - motion_anchor_ori_b

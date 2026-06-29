@@ -1,0 +1,27 @@
+config_version: 1
+cluster: huoshan
+
+num_gpus: 8
+
+shared_workspace: "<CLUSTER_WORKSPACE>/PMT"
+pip_packages: ["tensordict", "wandb", "hydra-core", "omegaconf"]
+pip_directories: []
+py_modules: []
+py_paths: ["<CLUSTER_WORKSPACE>/PMT"]
+log_folder: "logs"
+os_env_vars:
+  PYTORCH_CUDA_ALLOC_CONF: "expandable_segments:True"
+  PMT_PROFILE: "cluster"
+  WHOLE_BODY_TRACKING_ASSET_DIR: "<WHOLE_BODY_TRACKING_REPO>/source/whole_body_tracking/whole_body_tracking/assets"
+  OMNI_KIT_ACCEPT_EULA: "YES"
+
+# Class-A real training: blind transformer teacher on the mocaphouse big_map
+# terrain + terrain-anchored walk_dance1sub2start optimized clips (500 clips).
+# mesh:   .../whole_body_tracking/scripts/motion_adapter/assets/g1/g1_29dof_big_map.stl
+# motion: .../motions/terrain_mocaphouse/walk_dance1sub2start/optimized   (cluster-resolved)
+# --num_envs is the PER-GPU env count (md_ai_kit convention) -> 4096 * 8 = 32768 total.
+tasks:
+  - name: PMT-WalkDanceBigMap-G1-v0
+    type: "md_rl.train"
+    entry_module: "<CLUSTER_WORKSPACE>/PMT/scripts/submit/train_pmt.py"
+    args: ["--task", "PMT-WalkDanceBigMap-G1-v0", "--num_envs", "4096", "--max_iterations", "10000", "--distributed", "true", "--experiment_name", "pmt_walk_dance_bigmap", "--run_name", "8gpu-4096env", "--seed", "42", "--headless"]

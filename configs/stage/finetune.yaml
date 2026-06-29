@@ -1,0 +1,7 @@
+# axis: stage  (PMT plan §2/§3a — finetune from a loaded checkpoint)
+# Resume from a prior policy; brief warmup freeze; reset action std on load.
+lr: 5.0e-4                    # TODO(real value): rl_cfg.py finetune delta (plan §7)
+warmup_freeze_iters: 200
+reset_action_std_on_load: true
+teacher_mix_start: null
+teacher_mix_end: null

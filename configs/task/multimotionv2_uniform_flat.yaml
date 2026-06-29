@@ -1,0 +1,20 @@
+# task: MultiMotion V2 flat, UNIFORM sampler  (was G1-MultiMotionV2-Uniform-Flat-v0)
+# Identical to multimotionv2_flat EXCEPT the motion-axis sampler (uniform). Same env
+# class, same PPO runner — the sampler is a motion-axis param, not a new env class.
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: multi_uniform
+  - scene: none
+  - sensor: none
+  - obs: proprio
+  - reward: deepmimic_anchor
+  - network: mlp
+  - algorithm: ppo
+  - stage: scratch
+experiment_name: g1_multi_motion_flat_uniform
+
+# Profile-driven motion dir (cluster has NO motions/lafan_walk): local ->
+# ${MOTION_ROOT}/lafan_walk; cluster -> sonic/lafan1/robot_lafan1 (40 paired clips).
+motion:
+  motion_files: ${paths.MULTIMOTION_FLAT_MOTION}

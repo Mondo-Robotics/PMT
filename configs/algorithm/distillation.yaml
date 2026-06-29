@@ -1,0 +1,11 @@
+# axis: algorithm  (PMT plan §2, §3b — runner derived → distillation)
+# compat_name DERIVED from `name` via registry.ALGORITHM_COMPAT
+# (@register_algorithm("Distillation", compat_name="distillation")).
+name: Distillation       # registry.ALGORITHMS key (decorated class)
+# distillation rejects rnd/symmetry, requires a paired teacher/student command
+rnd: false
+symmetry: false
+recurrent: false
+# hyperparams
+learning_rate: 5.0e-4    # TODO(real value): isaaclab_rl/rsl_rl/distillation_cfg.py (plan §7)
+num_learning_epochs: 1

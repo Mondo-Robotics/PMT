@@ -1,0 +1,29 @@
+config_version: 1
+cluster: huoshan
+
+num_gpus: 4
+
+shared_workspace: "<CLUSTER_WORKSPACE>/PMT"
+pip_packages: ["tensordict", "wandb", "hydra-core", "omegaconf"]
+pip_directories: []
+py_modules: []
+py_paths: ["<CLUSTER_WORKSPACE>/PMT"]
+log_folder: "logs"
+os_env_vars:
+  PYTORCH_CUDA_ALLOC_CONF: "expandable_segments:True"
+  PMT_PROFILE: "cluster"
+  WHOLE_BODY_TRACKING_ASSET_DIR: "<WHOLE_BODY_TRACKING_REPO>/source/whole_body_tracking/whole_body_tracking/assets"
+  OMNI_KIT_ACCEPT_EULA: "YES"
+
+# Class-A terrain training: PMT token-tracker PPO pretrain FROM SCRATCH (no PMT
+# checkpoint blocker) on the stepping-stone terrain. mesh exists on NAS
+# (.../whole_body_tracking/positive_stepping_with_stairs.stl).
+#
+# *** DATA-GATED ***: same stepping-stone motion dir as pmt_stepping_stone, resolves
+# (cluster) to .../motions/terrain_positive_stepping_stone_with_stairs/walk1_subject1_stair/optimized
+# which is NOT yet on the NAS. Upload the clips before submitting. See README.md.
+tasks:
+  - name: PMT-PerceptiveMotionTokenTracker-G1-v0
+    type: "md_rl.train"
+    entry_module: "<CLUSTER_WORKSPACE>/PMT/scripts/submit/train_pmt.py"
+    args: ["--task", "PMT-PerceptiveMotionTokenTracker-G1-v0", "--num_envs", "4096", "--max_iterations", "10000", "--distributed", "true", "--experiment_name", "pmt_perceptive_motion_token_tracker", "--run_name", "4gpu-4096env", "--seed", "42", "--headless"]

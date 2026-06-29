@@ -1,0 +1,10 @@
+# axis: network — Type-II ablation: MapProprioCross (use_map_proprio_cross_attention on).
+# Equivalent --multirun: network.use_map_proprio_cross_attention=true.
+name: VisionTransformerActorCritic
+d_model: 256
+n_layers: 4
+n_heads: 4
+history_length: 10
+use_action_residual: true
+use_identity_gates: true
+use_map_proprio_cross_attention: true  # <-- FLIPPED (MapProprioCross)

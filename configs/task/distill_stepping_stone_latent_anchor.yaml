@@ -1,0 +1,20 @@
+# PMT task (plan §3) — distill blind teacher into vision student (latent anchor)
+defaults:
+  - robot: g1
+  - terrain: big_map
+  # Paired optimized/raw big_map walk_dance clips (walk_dance1sub2start): teacher reads
+  # "motion" (optimized), student reads the synced "student_motion" (raw). The env's
+  # pair_motion_files matches optimized<->raw by canonical (suffix-stripped) basename.
+  # SAME clips the big_map teacher trained on (reward 84.46), so the vision student
+  # distills the policy the teacher mastered.
+  - motion: walk_dance_paired
+  - scene: none
+  - sensor: height_scan
+  - obs: vision_student
+  - reward: deepmimic_anchor_fair
+  - network: vision_student_latent_anchor
+  - algorithm: distillation # runner derived -> distillation
+  - stage: distill
+network:
+  teacher_ckpt: ${checkpoints.ss_teacher}   # named ckpt, resolved by builder (§5)
+experiment_name: distill_ss_latent_anchor

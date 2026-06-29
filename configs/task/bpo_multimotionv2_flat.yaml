@@ -1,0 +1,21 @@
+# task: BPO MultiMotion V2 flat  (was G1-BPO-MultiMotionV2-Flat-v0)
+# SAME env as the base multi-motion flat (G1MultiMotionV2EnvCfg); only the ALGORITHM
+# axis swaps PPO -> BPO. Network stays the standard MLP actor-critic (BPO extends PPO).
+# Source: G1FlatMultiMotionBPORunnerCfg (rsl_rl_bpo_cfg.py).
+defaults:
+  - robot: g1
+  - terrain: flat
+  - motion: multi_bin_adaptive
+  - scene: none
+  - sensor: none
+  - obs: proprio
+  - reward: deepmimic_anchor
+  - network: mlp
+  - algorithm: bpo          # runner derived → on_policy
+  - stage: scratch
+experiment_name: g1_multi_motion_flat_bpo
+
+# Profile-driven motion dir (cluster has NO motions/lafan_walk): local ->
+# ${MOTION_ROOT}/lafan_walk; cluster -> sonic/lafan1/robot_lafan1 (40 paired clips).
+motion:
+  motion_files: ${paths.MULTIMOTION_FLAT_MOTION}

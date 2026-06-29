@@ -1,0 +1,10 @@
+# axis: network  (PMT plan §3b) — vision ARCHITECTURE-ablation base.
+# Type-I ablations are the `architecture` FIELD on ONE registered class
+# (VisionAblationActorCritic): flat_mlp | split_mlp | split_cnn. The variant
+# yamls below flip ONLY that field (or --multirun network.architecture=...).
+# name == registered class_name; compat_name=vision_ablation.
+name: VisionAblationActorCritic
+architecture: flat_mlp               # flat_mlp | split_mlp | split_cnn
+feature_dim: 128
+map_height: 17
+map_width: 11

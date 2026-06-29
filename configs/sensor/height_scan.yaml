@@ -1,0 +1,5 @@
+# axis: sensor  (PMT plan §2 note 2, §7 source: scene cfgs with height_scan grid)
+type: height_scan
+grid_size: [1.0, 1.0]      # TODO(real value): scan grid extents — scene cfg (plan §7)
+grid_resolution: 0.1       # TODO(real value): height-scan resolution — scene cfg
+# Changes scene cfg + obs shape + network input dim simultaneously (plan §2 note 2).

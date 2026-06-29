@@ -1,0 +1,4 @@
+# axis: runner  (PMT plan §3b — name == registry.RUNNERS key)
+# Usually DERIVED from algorithm (compat.SPECS[alg].runner == "on_policy"); kept as
+# an explicit axis so a task can assert/override the derived runner (plan §3b).
+name: on_policy          # registry.RUNNERS key

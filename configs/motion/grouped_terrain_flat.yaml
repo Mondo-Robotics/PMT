@@ -1,0 +1,34 @@
+# axis: motion  (PMT plan §9b — mixed terrain + flat in ONE store, ONE sampler,
+#   via UnifiedMotionCommandV2 with per-clip {origin offset + noise}. This SUBSUMES
+#   the old GroupedMultiMotionCommandV2 hard env partition WITHOUT pinning an env to a
+#   group spatially: any env can play any clip; its world origin + reset noise are set
+#   per-reset from the clip's is_terrain flag.)
+#
+# Data question RESOLVED (§9b, scripts/check_flat_clip_origin.py): flat clips start at
+# the world origin (body_pos_w[0,pelvis,:2] ~= (0,0)); terrain clips are world-placed on
+# the mesh. The (90,0,0) flat-patch offset is NOT baked into the data, so the command
+# must inject it at reset (inject_env_origins=true) for flat clips, keyed on the same
+# per-clip is_terrain flag that drives reset noise.
+command_class: UnifiedMultiMotionCommand     # the flexible class (plan §9b plan-of-record)
+storage_mode: eager
+sampler: bin_adaptive                        # ONE sampler over the whole mixed dataset
+chunk_length: 4000
+
+# Two clip lists. `terrain_motion_files` is the subset tagged terrain-anchored (zero
+# reset noise, zero origin offset). `flat_motion_files` is the plane subset (cfg reset
+# noise, shifted to flat_origin). `motion_files` (the unified store's full list) is the
+# concatenation, assembled by the env cfg from these two.
+# terrain subset relative to ${paths.TERRAIN_MOTION_ROOT}; flat subset relative to
+# ${paths.SONIC_ROOT}.
+terrain_motion_files:
+  - ${paths.TERRAIN_MOTION_ROOT}/terrain_mocaphouse/walk_dance1sub1start/optimized
+flat_motion_files:
+  - ${paths.SONIC_ROOT}/lafan1/robot_lafan1
+
+# Per-clip env-origin injection (the §9b plan-of-record mechanism).
+inject_env_origins: true
+flat_origin: [90.0, 0.0, 0.0]                # == the flat patch baked in the combined mesh
+
+# Per-motion control rate (§3a dt-from-motion). Terrain-flat clips: dec=4 / dt=0.005.
+decimation: 4
+sim_dt: 0.005

@@ -1,0 +1,26 @@
+# PMT task — blind transformer TEACHER on the mocaphouse big_map terrain,
+# trained on the terrain-anchored cartwheel optimized clips
+# (cartwheel_bigmap_n100_full_weight500, 500 CLEAN clips). Same proven transformer stack
+# as walk_dance_bigmap / pmt_stepping_stone: terrain mesh + motion dir swapped via
+# config (no new env class) — reuses _build_stepping_stone_env + the transformer
+# teacher (blind: full proprio+command obs, NO vision).
+defaults:
+  - robot: g1
+  - terrain: big_map
+  - motion: multi
+  - scene: none
+  - sensor: none
+  - obs: transformer_hist
+  - reward: deepmimic_anchor
+  - network: transformer
+  - algorithm: ppo          # runner derived -> on_policy
+  - stage: scratch
+experiment_name: cartwheel_bigmap
+
+# Terrain-anchored cartwheel optimized clips (world-placed on the big_map mesh).
+# Relative to ${paths.TERRAIN_MOTION_ROOT}: on cluster this is .../motions (so the dir
+# resolves to .../motions/terrain/cartwheel_bigmap_n100_full_weight500/optimized — the
+# clean weight500 full set, 500 clips); locally TERRAIN_MOTION_ROOT is DATASET_ROOT/terrain.
+# NB: the n100_full dir (without _weight500) holds only rejected/debug clips — use weight500.
+motion:
+  motion_files: ${paths.TERRAIN_MOTION_ROOT}/terrain/cartwheel_bigmap_n100_full_weight500/optimized

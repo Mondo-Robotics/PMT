@@ -1,0 +1,10 @@
+# axis: network — Type-II ablation: NoIdentityGate (use_identity_gates flipped off).
+# Equivalent --multirun: network.use_identity_gates=false.
+name: VisionTransformerActorCritic
+d_model: 256
+n_layers: 4
+n_heads: 4
+history_length: 10
+use_action_residual: true
+use_identity_gates: false            # <-- FLIPPED (NoIdentityGate)
+use_map_proprio_cross_attention: false

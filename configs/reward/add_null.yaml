@@ -1,0 +1,8 @@
+# axis: reward  (PMT plan §9b — reward-as-data; term->weight dict)
+# ADD uses the DISCRIMINATOR reward, not a hand-shaped DeepMimic task reward:
+# task_reward_weight=0.0 (rsl_rl_add_cfg.py:53). The env still computes its base
+# reward terms (so the manager builds), but the algorithm scales the task reward to
+# zero and learns purely from the discriminator (disc_reward_weight=1.0). We therefore
+# leave the env reward weights at their cfg defaults (empty override here) and let the
+# add_ppo algorithm own the task/disc reward blend.
+weights: {}
