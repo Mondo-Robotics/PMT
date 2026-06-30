@@ -78,6 +78,24 @@ matches the input motion contract so it can be consumed directly by PMT:
 `fps`, `joint_pos [T,29]`, `joint_vel [T,29]`, `body_pos_w [T,30,3]`, `body_quat_w [T,30,4]`,
 `body_lin_vel_w`, `body_ang_vel_w` (plus `transform_dx/dy/dyaw` and IK-quality metadata).
 
+## Visualize a generated clip
+
+Replay any `raw/`, `optimized/`, or `ghost/` npz on the terrain scene with `visualize_npz.py`:
+
+```bash
+# headless -> video (works under MUJOCO_GL=egl; needs imageio + imageio-ffmpeg)
+MUJOCO_GL=egl python -m visualize_npz \
+  --npz outputs/my_experiment/optimized/<clip>_optimized.npz \
+  --out clip.mp4
+
+# interactive MuJoCo viewer (needs a display; omit --out)
+python -m visualize_npz --npz outputs/my_experiment/optimized/<clip>_optimized.npz
+```
+
+Pass `--xml <scene.xml>` if the clip was generated on a non-default terrain. `--out` accepts
+`.mp4` or `.gif`; `--speed`, `--fps`, `--width`, `--height` are also available.
+
 ## Dependencies
 
 - `mujoco>=3.1`, `numpy`, `scipy`
+- `imageio` + `imageio-ffmpeg` (only for `visualize_npz.py --out <video>`)
