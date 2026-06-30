@@ -42,7 +42,17 @@ This module is the **core MPPI terrain-adaptation function only**. The optional 
 figure-rendering / replay utilities have been removed to keep it minimal. The default path is
 `--planner mppi --ik_backend jacobian`.
 
-## Quick start
+## Usage
+
+> Always run from the repo root (the dir that contains `stair_mppi/`), otherwise
+> `python -m stair_mppi...` fails with `ModuleNotFoundError: No module named 'stair_mppi'`.
+> Needs an env with `mujoco` (e.g. conda `my_isaaclab` / `wbt`).
+
+```bash
+cd /home/zifan_wang/opensource/PMT/TCRS
+```
+
+### Step 1 — Generate (flat motion + terrain → optimized motion)
 
 Batch (headless) mode is the generator — it writes `raw/`, `optimized/`, `ghost/` npz dirs:
 
@@ -56,7 +66,40 @@ MUJOCO_GL=egl python -u -m stair_mppi.mppi_foot_planner_smooth \
   --batch_output_dir outputs/my_experiment
 ```
 
-### Key arguments
+This writes, per accepted round:
+```
+outputs/my_experiment/
+  raw/        <clip>_f1100_round_0000_dx..._raw.npz        # original flat motion, terrain-placed
+  optimized/  <clip>_f1100_round_0000_dx..._optimized.npz  # terrain-adapted (the one you want)
+  ghost/      <clip>_f1100_round_0000_dx..._ghost.npz       # z-only ghost reference
+```
+
+### Step 2 — Visualize an output clip
+
+Replay any `raw/`, `optimized/`, or `ghost/` npz on the terrain scene with `visualize_npz.py`.
+Point `--npz` at one of the files Step 1 produced:
+
+```bash
+# headless -> video (works under MUJOCO_GL=egl; needs imageio + imageio-ffmpeg)
+MUJOCO_GL=egl python -m visualize_npz \
+  --npz outputs/my_experiment/optimized/walk1_subject1_f1100_round_0000_dx+16.437_dy-3.667_dyaw+2.2520_optimized.npz \
+  --out clip.mp4
+
+# or just grab the first optimized clip automatically:
+CLIP=$(ls outputs/my_experiment/optimized/*.npz | head -1)
+MUJOCO_GL=egl python -m visualize_npz --npz "$CLIP" --out clip.mp4
+
+# interactive MuJoCo viewer instead of a video (needs a display; omit MUJOCO_GL=egl and --out)
+python -m visualize_npz --npz "$CLIP"
+```
+
+`--out` accepts `.mp4` or `.gif`; `--xml <scene.xml>` if the clip used a non-default terrain;
+`--speed`, `--fps`, `--width`, `--height` are also available. The visualizer force-enables all
+geom groups, so the stepping-stone terrain (geom group 2) always shows. There is **no flat
+floor plane** — the robot stands on the box stepping-stones; the blue checkerboard is just the
+default ground grid.
+
+### Key arguments (Step 1)
 
 | Arg | Default | Meaning |
 |-----|---------|---------|
@@ -79,23 +122,6 @@ matches the input motion contract so it can be consumed directly by PMT:
 
 `fps`, `joint_pos [T,29]`, `joint_vel [T,29]`, `body_pos_w [T,30,3]`, `body_quat_w [T,30,4]`,
 `body_lin_vel_w`, `body_ang_vel_w` (plus `transform_dx/dy/dyaw` and IK-quality metadata).
-
-## Visualize a generated clip
-
-Replay any `raw/`, `optimized/`, or `ghost/` npz on the terrain scene with `visualize_npz.py`:
-
-```bash
-# headless -> video (works under MUJOCO_GL=egl; needs imageio + imageio-ffmpeg)
-MUJOCO_GL=egl python -m visualize_npz \
-  --npz outputs/my_experiment/optimized/<clip>_optimized.npz \
-  --out clip.mp4
-
-# interactive MuJoCo viewer (needs a display; omit --out)
-python -m visualize_npz --npz outputs/my_experiment/optimized/<clip>_optimized.npz
-```
-
-Pass `--xml <scene.xml>` if the clip was generated on a non-default terrain. `--out` accepts
-`.mp4` or `.gif`; `--speed`, `--fps`, `--width`, `--height` are also available.
 
 ## Dependencies
 
