@@ -29,8 +29,10 @@ stair_mppi/
   terrain_warp.py               # support-aware root-z filter
   gait_phase.py                 # gait-phase clock (contact detection)
 assets/
-  g1/g1_29dof_scene_stairs_ud.xml   # terrain scene (procedural box stairs) — default --xml
-  g1/g1_29dof_rev_1_0.xml           # G1 robot model (included by the scene)
+  g1/g1_29dof_scene_stairs_ud.xml   # terrain scene (positive stepping-stones + stairs, box geoms) — default --xml
+  g1/g1_29dof_positive_stepping_with_stairs_box.xml  # identical scene, original name
+  g1/g1_29dof_rev_1_0_no_plane.xml  # G1 robot model, no ground plane (included by the scene)
+  g1/g1_29dof_rev_1_0.xml           # G1 robot model with a flat ground plane (alt scene include)
   g1/meshes/*.STL                   # robot collision/visual meshes
   motions/walk1_subject1.npz        # sample flat-ground motion clip
 ```
@@ -59,7 +61,7 @@ MUJOCO_GL=egl python -u -m stair_mppi.mppi_foot_planner_smooth \
 | Arg | Default | Meaning |
 |-----|---------|---------|
 | `--motion` | `assets/motions/walk1_subject1.npz` | input flat-ground clip (`.npz`) |
-| `--xml` | `assets/g1/g1_29dof_scene_stairs_ud.xml` | terrain scene (must `<include>` `g1_29dof_rev_1_0.xml`) |
+| `--xml` | `assets/g1/g1_29dof_scene_stairs_ud.xml` | terrain scene (must `<include>` a robot XML, e.g. `g1_29dof_rev_1_0_no_plane.xml`) |
 | `--start_frame` / `--n_frames` | `2600` / `1000` | slice of the clip to optimize |
 | `--planner` | `mppi` | swing planner (core path) |
 | `--ik_backend` | `jacobian` | IK solver (core path) |
