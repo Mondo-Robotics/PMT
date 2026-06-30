@@ -84,6 +84,11 @@ def _run_viewer(model, data, set_frame, n_frames, fps, args):
 
     dt = 1.0 / (fps * max(args.speed, 1e-6))
     with mujoco.viewer.launch_passive(model, data) as viewer:
+        # Force every geom group visible. The terrain boxes live on geom group 2,
+        # and the viewer can have a group toggled off (then the terrain "disappears"
+        # and only the robot shows). Enabling all groups makes the scene robust.
+        for g in range(len(viewer.opt.geomgroup)):
+            viewer.opt.geomgroup[g] = 1
         t = 0
         while viewer.is_running():
             set_frame(t % n_frames)
@@ -103,12 +108,17 @@ def _render_video(model, data, set_frame, n_frames, fps, args):
     mujoco.mjv_defaultFreeCamera(model, cam)
     cam.distance *= 1.4
 
+    # Force every geom group visible so the terrain boxes (geom group 2) always render.
+    opt = mujoco.MjvOption()
+    for g in range(len(opt.geomgroup)):
+        opt.geomgroup[g] = 1
+
     frames = []
     for t in range(n_frames):
         set_frame(t)
         # keep the camera tracking the pelvis
         cam.lookat[:] = data.qpos[:3]
-        renderer.update_scene(data, cam)
+        renderer.update_scene(data, cam, scene_option=opt)
         frames.append(renderer.render())
     renderer.close()
 
