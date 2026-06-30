@@ -1,7 +1,5 @@
 # PMT — Perceptive Motion Tracking
 
-**Project page:** https://acodedog.github.io/perceptive-bfm/
-
 <table>
   <tr>
     <td align="center"><img src="assets/videos/demo-cartwheel-2.gif" width="100%"><br><sub><b>Cartwheel</b></sub></td>
@@ -9,11 +7,28 @@
   </tr>
 </table>
 
-PMT trains humanoid **motion-tracking** RL policies on [Isaac Lab](https://isaac-sim.github.io/IsaacLab/):
-DeepMimic-style imitation, vision/terrain perception, cross-embodiment (SONIC), adversarial imitation
-(ADD), and **teacher → distill → finetune** pipelines. Everything is **config-driven**: a task
-*selects* independent axes (`robot` / `terrain` / `motion` / `obs` / `reward` / `network` /
-`algorithm` / `stage`) and the builder *derives* the coupled ones, failing loud on invalid combos.
+PMT trains humanoid **motion-tracking** RL policies for the Unitree G1 on
+[Isaac Lab](https://isaac-sim.github.io/IsaacLab/): DeepMimic-style imitation, vision/terrain
+perception, cross-embodiment (SONIC), adversarial imitation (ADD), and
+**teacher → distill → finetune** pipelines. Everything is **config-driven**: a task *selects*
+independent axes (`robot` / `terrain` / `motion` / `obs` / `reward` / `network` / `algorithm` /
+`stage`) and the builder *derives* the coupled ones, failing loud on invalid combos.
+
+**What's in this repo**
+
+- **Training & playback** — `scripts/train.py` / `scripts/play.py` over a catalog of ~25 G1 tasks
+  ([Task catalog](#task-catalog)), config-composed from `configs/` by the
+  [`pmt_tasks/`](pmt_tasks/README.md) task layer.
+- **Pretrained policies** — ready-to-run G1 checkpoints under `checkpoints/pretrained/` (git-lfs).
+- **Demo motion data** — a 99-pair sample of `raw`/`optimized` terrain clips + terrain meshes
+  under `assets/` (git-lfs) so the terrain/distill tasks run out-of-the-box.
+- **TCRS** — an MPPI terrain-motion optimizer ([`TCRS/`](TCRS/README.md)) that generates the
+  `optimized` clips from `raw` motion + a terrain scene.
+- **MuJoCo backend** — the flat task family also runs on [mjlab](https://github.com/mujocolab/mjlab)
+  (MuJoCo-Warp); see [`docs/MJLAB_USAGE.md`](docs/MJLAB_USAGE.md).
+
+> **Scope:** this is a research/training codebase. It runs **inside** an existing Isaac Lab install
+> (it does not vendor Isaac Sim / Isaac Lab) — see [Install](#install).
 
 ---
 
@@ -112,7 +127,7 @@ git lfs pull             # fetch the .pt / .onnx files after cloning
 | `sonic_onnx/` | `PMT-SONIC-G1-MultiMotionV2-Flat-v0` | SONIC (official ONNX) | — |
 
 ¹ ADD's `Train/mean_reward` is intentionally small (adversarial imitation); the run is full-length and healthy.
-`reward` = max `Train/mean_reward`. **BFM-Zero** ships no checkpoint (its FB-CPR runner produced none).
+`reward` = max `Train/mean_reward`.
 
 ```bash
 python scripts/play.py --task PMT-G1-MultiMotionV2-Flat-v0 \
@@ -126,11 +141,24 @@ per-checkpoint task/data requirements.
 
 ## Demo motion data
 
-A 100-pair sample of terrain-anchored clips ships under
+A 99-pair sample of terrain-anchored G1 clips ships under
 [`assets/motions/`](assets/motions/README.md) (git-lfs) so the terrain / distill tasks run
-out-of-the-box: `terrain_mocaphouse/walk_dance1sub2start/{raw,optimized}/` (100 matched
-`raw`↔`optimized` pairs — the distill pipeline uses `optimized` as the teacher reference and
-`raw` as the student reference). Point PMT at it:
+out-of-the-box: `terrain_mocaphouse/walk_dance1sub2start/{raw,optimized}/`.
+
+**What the clips are.** Each is a `.npz` of a 50 fps, 29-DoF G1 trajectory (world-frame body
+poses + joint angles/velocities — full schema in
+[`docs/MOTION_DATA_FORMAT.md`](docs/MOTION_DATA_FORMAT.md)). They come in 99 matched
+`raw`↔`optimized` pairs (paired by filename stem):
+
+- **`raw/`** — the flat-retargeted source motion (the vision student's reference).
+- **`optimized/`** — the **terrain-adapted** version of that same motion, with the feet
+  re-placed onto the terrain (the teacher's reference).
+
+**Where the terrain comes from.** The `optimized/` clips are produced by **[TCRS](TCRS/README.md)**
+(this repo's MPPI terrain-motion optimizer): it takes a `raw` clip + a terrain scene and re-places
+the feet onto it. These demo clips were optimized onto the **`big_map` mesh** shipped under
+[`assets/terrain/g1_29dof_big_map.stl`](assets/terrain/) — the same mesh the
+`PMT-WalkDanceBigMap-G1-v0` task tracks them on. Point PMT at it:
 
 ```bash
 git lfs pull                                          # fetch the .npz clips
@@ -184,25 +212,26 @@ See [`pmt_tasks/env_cfgs/README.md`](pmt_tasks/env_cfgs/README.md) for the per-f
 ```
 PMT/
 ├── configs/                # source of truth: axis-group YAMLs + one task composition per experiment
-├── motion_tracking_rl/     # the RL core (algorithms, networks, runners, compat matrix, bfm_zero/)
+├── motion_tracking_rl/     # the RL core (algorithms, networks, runners, compat matrix)
 ├── pmt_tasks/              # task layer: builder, derive, registry_gym, mdp/, env_cfgs/, robots/
-├── scripts/                # train.py, play.py, bfm_zero/, submit/, mjlab_*, ...
+├── scripts/                # train.py, play.py, mjlab_*, ...
 ├── TCRS/                   # terrain-adaptive motion optimizer (MPPI) — generates optimized clips
+├── assets/                 # demo motion clips + terrain meshes + demo videos (git-lfs)
 ├── checkpoints/pretrained/ # git-lfs pretrained G1 policies
 ├── tests/                  # pure test suite + runtime gate scripts
-├── cluster_yaml/           # md_rl cluster job templates
-└── docs/                   # USAGE.md, ARCHITECTURE.md, compat_matrix.md, MJLAB_BACKEND_PLAN.md
+└── docs/                   # USAGE.md, ARCHITECTURE.md, compat_matrix.md, MJLAB_USAGE.md, ...
 ```
 
 `configs/` is the source of truth — see [`configs/README.md`](configs/README.md) for the
-config-author guide and [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the design.
+config-author guide, [`pmt_tasks/README.md`](pmt_tasks/README.md) for the task layer (how a task
+yaml becomes a runnable gym env), and [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the design.
 
 ---
 
 ## Further reading
 
 - [`docs/USAGE.md`](docs/USAGE.md) — full env-var table, per-task command forms, the teacher →
-  distill → finetune pipeline, SONIC ONNX, BFM-Zero, and how to add a task / motion / robot / network.
+  distill → finetune pipeline, SONIC ONNX, and how to add a task / motion / robot / network.
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — axis taxonomy, derivation table, layering contract.
 - [`docs/compat_matrix.md`](docs/compat_matrix.md) — generated algorithm × network compatibility matrix.
 - [`docs/MJLAB_USAGE.md`](docs/MJLAB_USAGE.md) — **how to run PMT on the mjlab (MuJoCo-Warp) backend**: convert clips, eval/view a trained ckpt, select the backend.

@@ -5,7 +5,7 @@
 # (distill_stepping_stone_env_cfg.py:85).
 command_class: MultiMotionCommandV2          # + SyncedStudentMultiMotionCommandV2 (paired)
 # Relative to ${paths.TERRAIN_MOTION_ROOT} (local DATASET_ROOT/terrain; cluster motions/).
-# DATA-GATED ON CLUSTER: stepping-stone clips not yet on the NAS (see cluster_yaml/README.md).
+# DATA-GATED: stepping-stone clips are not shipped with the repo; provide your own.
 motion_files: ${paths.TERRAIN_MOTION_ROOT}/terrain_positive_stepping_stone_with_stairs/walk1_subject1_stair/optimized
 raw_motion_files: ${paths.TERRAIN_MOTION_ROOT}/terrain_positive_stepping_stone_with_stairs/walk1_subject1_stair/raw
 terrain_motion_files: null

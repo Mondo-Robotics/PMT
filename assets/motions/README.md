@@ -1,12 +1,12 @@
 # Demo motion clips
 
-A 100-pair sample of terrain-anchored G1 motion clips, so the terrain / distill tasks are
+A 99-pair sample of terrain-anchored G1 motion clips, so the terrain / distill tasks are
 runnable out-of-the-box. Tracked with **git-lfs** (`git lfs pull` after cloning).
 
 ```
 terrain_mocaphouse/walk_dance1sub2start/
-  raw/        100× *_raw.npz         flat-retargeted clips (student reference)
-  optimized/  100× *_optimized.npz   terrain-optimized clips (teacher reference)
+  raw/        99× *_raw.npz         flat-retargeted clips (student reference)
+  optimized/  99× *_optimized.npz   terrain-optimized clips (teacher reference)
 ```
 
 - **Paired by filename stem**: `<stem>_raw.npz` ↔ `<stem>_optimized.npz` (the distill pipeline
@@ -15,7 +15,7 @@ terrain_mocaphouse/walk_dance1sub2start/
   mesh); the `raw` clips are the flat-retarget inputs. Schema: 50 fps, 29 G1 joints, world-frame
   body poses (`joint_pos/joint_vel/body_pos_w/body_quat_w/...`). Full clip contract (required keys,
   shapes, dtypes, body/joint order) is in [`docs/MOTION_DATA_FORMAT.md`](../../docs/MOTION_DATA_FORMAT.md).
-- This is a **100-clip subset** of the full 500-clip `walk_dance1sub2start` set (kept small for the
+- This is a **99-clip subset** of the full 500-clip `walk_dance1sub2start` set (kept small for the
   public repo); enough to train/play the terrain teacher and the distill student on a demo scale.
 
 ## Point PMT at this data
