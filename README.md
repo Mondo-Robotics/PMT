@@ -243,6 +243,32 @@ yaml becomes a runnable gym env), and [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE
 
 ---
 
+## Acknowledgements
+
+PMT builds on, ports, or reimplements a number of open works. We gratefully acknowledge them; if
+you use the corresponding parts of PMT, please cite the original sources.
+
+**Frameworks & infrastructure**
+
+- **Isaac Lab** — the simulation/RL framework PMT runs on. https://github.com/isaac-sim/IsaacLab
+- **rsl_rl** — the PPO / distillation runner core. https://github.com/leggedrobotics/rsl_rl
+- **mjlab** — MuJoCo-Warp reimplementation of Isaac Lab's manager API (PMT's optional MuJoCo backend). https://github.com/mujocolab/mjlab
+- **BeyondMimic / whole_body_tracking** — the motion-tracking task and reward stack PMT descends from. Repo: https://github.com/HybridRobotics/whole_body_tracking · Paper: https://arxiv.org/abs/2508.08241
+
+**Methods reimplemented or integrated as PMT tasks**
+
+- **SONIC** (cross-embodiment whole-body control) — Code: https://github.com/NVlabs/GR00T-WholeBodyControl · Paper: https://arxiv.org/abs/2511.07820
+- **RGMT** — https://arxiv.org/abs/2601.23080
+- **ADD** (adversarial motion imitation) — https://arxiv.org/html/2505.04961v1 · https://add-moo.github.io/
+- **BPO** — https://arxiv.org/abs/2604.18578
+- **FPO++** (flow-policy optimization) — Code: https://github.com/amazon-far/fpo-control · Paper: https://arxiv.org/abs/2602.02481
+- **BFM-Zero** (FB-CPR behavior foundation model) — https://arxiv.org/abs/2511.04131
+
+The bundled BFM-Zero (FB-CPR-Aux) code under `motion_tracking_rl/bfm_zero/_vendor/` is vendored from
+its upstream release; see the License note below and [`THIRD_PARTY_LICENSES`](THIRD_PARTY_LICENSES).
+
+---
+
 ## License
 
 PMT's own code is released under the **BSD 3-Clause License** (see [`LICENSE`](LICENSE)). PMT also
