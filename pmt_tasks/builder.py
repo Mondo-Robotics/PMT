@@ -518,10 +518,8 @@ def _build_distill_latent_anchor_env(cfg):
 def _build_finetune_vision_teacher_env(cfg):
     """PPO-finetune env for the distilled vision-transformer student (P3).
 
-    Single ``motion`` command (NOT paired) + height-scan vision group on the big_map
-    mesh. Mirrors _build_distill_latent_anchor_env's data-driven injection but uses the
-    SINGLE optimized clip dir (motion.motion_files) — there is no raw/student pairing in
-    finetune.
+    PAIRED motion: reward from optimized clips (motion command), policy obs from
+    raw clips (student_motion command). Matches whole_body_tracking finetune logic.
     """
     from pmt_tasks.env_cfgs.pmt.finetune_stepping_stone import (
         PMTSteppingStoneVisionTeacherFinetuneEnvCfg,
@@ -531,10 +529,10 @@ def _build_finetune_vision_teacher_env(cfg):
     motion = cfg["motion"]
     env_cfg = PMTSteppingStoneVisionTeacherFinetuneEnvCfg()
     env_cfg.pmt_mesh_path = str(terrain["mesh_path"])
-    env_cfg.pmt_motion_paths = _as_path_list(motion.get("motion_files"))
+    env_cfg.pmt_optimized_motion_paths = _as_path_list(motion.get("motion_files"))
+    env_cfg.pmt_raw_motion_paths = _as_path_list(motion.get("raw_motion_files"))
     env_cfg.pmt_decimation = int(motion.get("decimation", 4))
     env_cfg.pmt_sim_dt = float(motion.get("sim_dt", 0.005))
-    env_cfg.pmt_history_length = int(cfg["obs"].get("history_length", 10))
     env_cfg.__post_init__()
     return env_cfg
 
