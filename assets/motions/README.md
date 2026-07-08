@@ -1,7 +1,8 @@
 # Demo motion clips
 
 A 99-pair sample of terrain-anchored G1 motion clips, so the terrain / distill tasks are
-runnable out-of-the-box. Tracked with **git-lfs** (`git lfs pull` after cloning).
+runnable out-of-the-box. Use the root [Download assets](../../README.md#download-assets)
+section to fetch the Hugging Face mirror, Google Drive mirror, or Git LFS fallback.
 
 ```
 terrain_mocaphouse/walk_dance1sub2start/

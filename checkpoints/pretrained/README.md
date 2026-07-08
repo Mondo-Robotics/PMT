@@ -1,12 +1,16 @@
 # Pretrained PMT checkpoints
 
 Pretrained G1 humanoid motion-tracking policies, ready to load and roll out. The `.pt` and
-`.onnx` files are tracked with **git-lfs**:
+`.onnx` files are mirrored with the full PMT asset bundle:
 
 ```bash
-git lfs install      # once
-git lfs pull         # fetch the binaries after cloning
+hf download aCodeDog/PMT-assets --repo-type dataset --local-dir /tmp/PMT-assets
+cd /path/to/PMT
+rsync -a /tmp/PMT-assets/checkpoints ./
 ```
+
+See the root [Download assets](../../README.md#download-assets) section for checksum verification,
+the Google Drive mirror, and the Git LFS fallback.
 
 These are the validated post-refactor runs (trained 2026-06-25…28). `reward` = max
 `Train/mean_reward`; all load into the current `motion_tracking_rl` network classes.
@@ -24,15 +28,17 @@ These are the validated post-refactor runs (trained 2026-06-25…28). `reward` =
 | `perceptive_motion_token_tracker.pt` | `PMT-PerceptiveMotionTokenTracker-G1-v0` | PerceptiveMotionTokenTracker | 20k | 80.9 |
 | `pcrbt_100style.pt` | `PMT-PCaRBT-100style-G1-v0` | PerceptiveResidualBehaviorTokenTracker | 30k | 62.4 |
 | `walkdance_bigmap_teacher.pt` | `PMT-WalkDanceBigMap-G1-v0` | TransformerActorCritic | 20k | 86.6 |
+| `distill_bigmap_walkdance.pt` | `PMT-Distill-SteppingStone-LatentAnchor-G1-v0` | VisionStudentTeacher | 5k | — |
 | `ppoft_vision_bigmap_walkdance.pt` | `PMT-PPOFinetune-VisionTeacher-SteppingStone-G1-v0` | VisionTransformerActorCritic | 3.2k | 71.9 |
 | `sonic_onnx/` | `PMT-SONIC-G1-MultiMotionV2-Flat-v0` | SONIC (official ONNX) | — | — |
 
 ¹ ADD's `Train/mean_reward` is intentionally small (adversarial imitation); the run is full-length and healthy.
 
-`ppoft_vision_bigmap_walkdance.pt` is the **stage-3 PPO-finetuned vision student** of the
-teacher → distill → finetune pipeline on the big_map walk_dance clips (warm-started from the
-distilled vision student, then PPO-sharpened). It pairs with the `walkdance_bigmap_teacher.pt`
-teacher: the teacher is the blind transformer, this is the deployable vision-conditioned policy.
+`distill_bigmap_walkdance.pt` is the **stage-2 distilled vision student** on the paired
+big_map walk_dance clips. `ppoft_vision_bigmap_walkdance.pt` is the **stage-3 PPO-finetuned
+vision student** warm-started from that distilled student, then PPO-sharpened. Both pair with
+the `walkdance_bigmap_teacher.pt` blind transformer teacher; the PPO-finetuned policy is the
+deployable vision-conditioned checkpoint.
 
 **SONIC** ships as the official released ONNX (`sonic_onnx/model_encoder.onnx` +
 `model_decoder.onnx` + `observation_config_sonic_release.yaml`) — the canonical deploy artifact,

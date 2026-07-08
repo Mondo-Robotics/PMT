@@ -21,9 +21,9 @@ independent axes (`robot` / `terrain` / `motion` / `obs` / `reward` / `network` 
 - **Training & playback** — `scripts/train.py` / `scripts/play.py` over a catalog of ~25 G1 tasks
   ([Task catalog](#task-catalog)), config-composed from `configs/` by the
   [`pmt_tasks/`](pmt_tasks/README.md) task layer.
-- **Pretrained policies** — ready-to-run G1 checkpoints under `checkpoints/pretrained/` (git-lfs).
+- **Pretrained policies** — ready-to-run G1 checkpoints under `checkpoints/pretrained/`.
 - **Demo motion data** — a 99-pair sample of `raw`/`optimized` terrain clips + terrain meshes
-  under `assets/` (git-lfs) so the terrain/distill tasks run out-of-the-box.
+  under `assets/` so the terrain/distill tasks run out-of-the-box.
 - **TCRS** — an MPPI terrain-motion optimizer ([`TCRS/`](TCRS/README.md)) that generates the
   `optimized` clips from `raw` motion + a terrain scene.
 - **MuJoCo backend** — the flat task family also runs on [mjlab](https://github.com/mujocolab/mjlab)
@@ -62,6 +62,56 @@ and each reads a `PMT_*` env override. The key ones:
 | `PMT_DATASET_ROOT` | Parent of the `terrain/` + `sonic/` clip trees. |
 
 The full env-var table (including per-task overrides) lives in [`docs/USAGE.md`](docs/USAGE.md).
+
+---
+
+## Download assets
+
+The pretrained checkpoints and demo motion clips are stored in this GitHub repo as Git LFS objects,
+but the recommended download path is the Hugging Face mirror. It includes the repo-relative asset
+files under `assets/`, `checkpoints/`, and `TCRS/`, plus `SHA256SUMS.txt`.
+
+**Recommended: Hugging Face**
+
+```bash
+# From anywhere. Install the CLI first if `hf` is not available:
+# python -m pip install -U "huggingface_hub[cli]"
+hf download aCodeDog/PMT-assets --repo-type dataset --local-dir /tmp/PMT-assets
+
+# Verify the staged download before copying it into the PMT checkout.
+cd /tmp/PMT-assets
+shasum -a 256 -c SHA256SUMS.txt
+
+# Copy the asset trees into your PMT repository root.
+cd /path/to/PMT
+rsync -a /tmp/PMT-assets/assets /tmp/PMT-assets/checkpoints /tmp/PMT-assets/TCRS ./
+```
+
+Use a staging directory first because the Hugging Face dataset has its own `README.md`; the `rsync`
+command above copies only the folders PMT needs.
+
+**Mirror: Google Drive**
+
+If Hugging Face is unavailable, download the Drive mirror and copy the same top-level folders into
+the PMT repository root:
+
+https://drive.google.com/drive/folders/1eKKCBihsATkp5uVu1MYNejaWchv2hxR3?usp=sharing
+
+```bash
+cd /path/to/PMT
+rsync -a /path/to/downloaded/PMT_Assets/assets \
+  /path/to/downloaded/PMT_Assets/checkpoints \
+  /path/to/downloaded/PMT_Assets/TCRS ./
+```
+
+**Fallback: Git LFS**
+
+If GitHub LFS bandwidth is available, the original LFS objects can still be fetched directly:
+
+```bash
+git lfs install          # once
+git lfs pull
+```
 
 ---
 
@@ -104,13 +154,8 @@ conversion, the eval/view commands, supported tasks, and backend selection).
 
 ## Pretrained models
 
-Ready-to-use G1 policies ship under [`checkpoints/pretrained/`](checkpoints/pretrained/), tracked
-with **git-lfs**:
-
-```bash
-git lfs install          # once
-git lfs pull             # fetch the .pt / .onnx files after cloning
-```
+Ready-to-use G1 policies are expected under [`checkpoints/pretrained/`](checkpoints/pretrained/).
+Use [Download assets](#download-assets) to populate the mirrored checkpoints after cloning.
 
 | File | Task / gym id | Network | reward |
 | --- | --- | --- | --- |
@@ -125,6 +170,7 @@ git lfs pull             # fetch the .pt / .onnx files after cloning
 | `perceptive_motion_token_tracker.pt` | `PMT-PerceptiveMotionTokenTracker-G1-v0` | PerceptiveMotionTokenTracker | 80.9 |
 | `pcrbt_100style.pt` | `PMT-PCaRBT-100style-G1-v0` | PerceptiveResidualBehaviorTokenTracker | 62.4 |
 | `walkdance_bigmap_teacher.pt` | `PMT-WalkDanceBigMap-G1-v0` | TransformerActorCritic | 86.6 |
+| `distill_bigmap_walkdance.pt` | `PMT-Distill-SteppingStone-LatentAnchor-G1-v0` | VisionStudentTeacher | — |
 | `ppoft_vision_bigmap_walkdance.pt` | `PMT-PPOFinetune-VisionTeacher-SteppingStone-G1-v0` | VisionTransformerActorCritic | 71.9 |
 | `sonic_onnx/` | `PMT-SONIC-G1-MultiMotionV2-Flat-v0` | SONIC (official ONNX) | — |
 
@@ -144,8 +190,8 @@ per-checkpoint task/data requirements.
 ## Demo motion data
 
 A 99-pair sample of terrain-anchored G1 clips ships under
-[`assets/motions/`](assets/motions/README.md) (git-lfs) so the terrain / distill tasks run
-out-of-the-box: `terrain_mocaphouse/walk_dance1sub2start/{raw,optimized}/`.
+[`assets/motions/`](assets/motions/README.md) so the terrain / distill tasks run out-of-the-box:
+`terrain_mocaphouse/walk_dance1sub2start/{raw,optimized}/`.
 
 **What the clips are.** Each is a `.npz` of a 50 fps, 29-DoF G1 trajectory (world-frame body
 poses + joint angles/velocities — full schema in
@@ -163,7 +209,7 @@ the feet onto it. These demo clips were optimized onto the **`big_map` mesh** sh
 `PMT-WalkDanceBigMap-G1-v0` task tracks them on. Point PMT at it:
 
 ```bash
-git lfs pull                                          # fetch the .npz clips
+# First populate assets/checkpoints with Download assets.
 export PMT_TERRAIN_MOTION_ROOT=$(pwd)/assets/motions  # demo clips (from the repo root)
 export PMT_TERRAIN_ASSET_DIR=$(pwd)/assets/terrain    # big_map .stl mesh (shipped under assets/terrain/)
 python scripts/play.py --task PMT-WalkDanceBigMap-G1-v0 \
@@ -218,8 +264,8 @@ PMT/
 ├── pmt_tasks/              # task layer: builder, derive, registry_gym, mdp/, env_cfgs/, robots/
 ├── scripts/                # train.py, play.py, mjlab_*, ...
 ├── TCRS/                   # terrain-adaptive motion optimizer (MPPI) — generates optimized clips
-├── assets/                 # demo motion clips + terrain meshes + demo videos (git-lfs)
-├── checkpoints/pretrained/ # git-lfs pretrained G1 policies
+├── assets/                 # demo motion clips, terrain meshes, and demo videos
+├── checkpoints/pretrained/ # pretrained G1 policies
 ├── tests/                  # pure test suite + runtime gate scripts
 └── docs/                   # USAGE.md, ARCHITECTURE.md, compat_matrix.md, MJLAB_USAGE.md, ...
 ```
