@@ -6,3 +6,7 @@ exported_models/
 wandb/
 .pytest_cache/
 .DS_Store
+
+# Downloaded by scripts/download_robot_assets.py (large third-party runtime assets).
+pmt_tasks/assets/unitree_description/
+pmt_tasks/assets/.unitree-assets-*/
