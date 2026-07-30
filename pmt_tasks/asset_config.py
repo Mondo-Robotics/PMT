@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from typing import List, Optional
 
-# PMT port: the ~216 MB robot-description binaries (USD/meshes) are NOT copied
+# PMT port: the ~181 MB robot-description files (URDF/meshes) are NOT copied
 # into PMT. This resolver locates them via (1) PMT/legacy env vars, (2) a
 # PMT-local assets dir if one is ever populated, and (3) a fallback to the
 # original whole_body_tracking source repo where the binaries already live.
@@ -25,6 +25,7 @@ _SOURCE_REPO_ASSET_DIR = str(
     / "assets"
 )
 _REQUIRED_SUBDIR = "unitree_description"
+_REQUIRED_ROBOT_FILE = os.path.join(_REQUIRED_SUBDIR, "urdf", "g1", "main.urdf")
 
 
 def _split_paths(value: Optional[str]) -> List[str]:
@@ -65,8 +66,8 @@ def _normalize_candidate(directory: str) -> Optional[str]:
     if os.path.basename(os.path.normpath(directory)) == _REQUIRED_SUBDIR:
         candidate = os.path.dirname(os.path.normpath(directory))
 
-    required_path = os.path.join(candidate, _REQUIRED_SUBDIR)
-    if os.path.isdir(required_path):
+    required_path = os.path.join(candidate, _REQUIRED_ROBOT_FILE)
+    if os.path.isfile(required_path):
         return candidate
     return None
 
@@ -80,8 +81,10 @@ def resolve_asset_dir(manual_override: Optional[str] = None) -> str:
     raise FileNotFoundError(
         "Unable to locate robot asset directory.\n"
         f"Set PMT_ASSET_DIR, WHOLE_BODY_TRACKING_ASSET_DIR, or WHOLE_BODY_TRACKING_REMOTE_ASSET_DIR to the\n"
-        f"directory that contains '{_REQUIRED_SUBDIR}'. Checked paths:\n  - "
+        f"directory that contains '{_REQUIRED_ROBOT_FILE}'. Checked paths:\n  - "
         + "\n  - ".join(searched)
+        + "\nInstall the required Unitree assets from the PMT repository root with:\n"
+        "  python scripts/download_robot_assets.py"
     )
 
 

@@ -43,13 +43,16 @@ working Isaac Lab install first, then install PMT (editable) into that env:
 conda activate <isaac-lab-env>           # the env that has Isaac Lab + Isaac Sim
 export OMNI_KIT_ACCEPT_EULA=YES          # accept the Omniverse EULA for headless launches
 cd /path/to/PMT
+python scripts/download_robot_assets.py  # installs the required Unitree G1 URDF + meshes
 python -m pip install -e .               # installs the motion_tracking_rl RL core
 ```
 
 Run all commands from the repository root (`pmt_tasks/`, `configs/`, `scripts/` are used in place).
 
-**Prerequisites:** an importable `isaaclab` / `isaaclab_tasks`, Python ≥ 3.10, the Unitree G1 robot
-assets (resolved via `PMT_ASSET_DIR` — not vendored), and per-task motion `*.npz` clips.
+**Prerequisites:** an importable `isaaclab` / `isaaclab_tasks`, Python ≥ 3.10, and per-task motion
+`*.npz` clips. The command above downloads the Unitree G1 robot descriptions into
+`pmt_tasks/assets/`, where PMT discovers them automatically. To use an existing copy instead, set
+`PMT_ASSET_DIR` to the directory that contains `unitree_description/`.
 
 **Paths.** PMT never hard-codes machine paths: `configs/paths.yaml` carries profile-selected roots
 and each reads a `PMT_*` env override. The key ones:
@@ -66,6 +69,26 @@ The full env-var table (including per-task overrides) lives in [`docs/USAGE.md`]
 ---
 
 ## Download assets
+
+### Required robot assets
+
+PMT uses the Unitree robot-description archive linked by the official
+[BeyondMimic](https://github.com/HybridRobotics/whole_body_tracking) setup instructions. The
+archive is not stored in this repository. Install its G1 URDF and meshes with:
+
+```bash
+python scripts/download_robot_assets.py
+```
+
+The download is approximately 56 MB and expands to approximately 181 MB. The downloader installs
+into `pmt_tasks/assets/` by default, pins the upstream archive's SHA-256 checksum, rejects unsafe
+archive entries, and extracts through a temporary directory so an interrupted download does not
+leave a partial installation. For a shared location, use
+`python scripts/download_robot_assets.py --asset-dir /path/to/assets` and then export
+`PMT_ASSET_DIR=/path/to/assets`. For offline installation, download the same archive separately and
+pass `--archive /path/to/unitree_description.tar.gz`; its checksum is still verified.
+
+### Demo motions and pretrained policies
 
 The pretrained checkpoints and demo motion clips are stored in this GitHub repo as Git LFS objects,
 but the recommended download path is the Hugging Face mirror. It includes the repo-relative asset

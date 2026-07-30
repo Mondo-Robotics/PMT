@@ -69,6 +69,18 @@ BFM-Zero code paths.
                 alongside the BSD-3-Clause header from rsl_rl.
 
 
+6. unitree_description robot assets (required runtime download)
+-----------------------------------------------------------------------------
+   Source     : https://storage.googleapis.com/qiayuanl_robot_descriptions/unitree_description.tar.gz
+   Upstream   : https://github.com/HybridRobotics/whole_body_tracking
+   License    : BSD, variant not specified (as declared by
+                unitree_description/package.xml in the downloaded archive)
+   Maintainer : Qiayuan Liao
+   Used in    : Downloaded by scripts/download_robot_assets.py into
+                pmt_tasks/assets/; provides the Unitree G1 URDF and meshes.
+   NOTE       : These files are not redistributed in the PMT Git repository.
+
+
 Full license texts
 -------------------
 - BSD 3-Clause : see the LICENSE file in this repository.
