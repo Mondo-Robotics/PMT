@@ -248,7 +248,12 @@ class VisionTransformerActorCritic(TransformerActorCritic):
             )
             self.map_proprio_out_proj = nn.Linear(self.dim_map_embed, self.dim_map_embed)
             self.map_proprio_gate = GatedResidual(self.dim_map_embed) if self.use_identity_gates else PlainResidual()
-            zero_init_last_linear(self.map_proprio_out_proj)
+            # Only zero-init the branch when there is NO learned gate: PlainResidual (out = x + branch)
+            # needs branch=0 for an identity warm-start. With GatedResidual the alpha=0 already provides
+            # the identity start, and zeroing the branch too creates a gradient deadlock (alpha grad
+            # ∝ branch = 0, branch grad ∝ tanh(alpha) = 0), so the gate can never open. See ReZero.
+            if not self.use_identity_gates:
+                zero_init_last_linear(self.map_proprio_out_proj)
 
         self.intent_modulator = MLP(self.dim_map_embed, self._n_embd, [256, 128], activation)
         self.intent_gate = GatedResidual(self._n_embd) if self.use_identity_gates else PlainResidual()
@@ -258,9 +263,12 @@ class VisionTransformerActorCritic(TransformerActorCritic):
         else:
             self.residual_policy = None
             self.residual_gate = None
-        zero_init_last_linear(self.intent_modulator)
-        if self.residual_policy is not None:
-            zero_init_last_linear(self.residual_policy)
+        # See map_proprio note above: with identity gates (alpha=0) the branch must stay non-zero so
+        # the gate has a gradient and can open. Only zero the branch on the un-gated PlainResidual path.
+        if not self.use_identity_gates:
+            zero_init_last_linear(self.intent_modulator)
+            if self.residual_policy is not None:
+                zero_init_last_linear(self.residual_policy)
         if self.use_foot_traj_head:
             foot_traj_in_dim = self._n_embd + (self.dim_map_embed if self.foot_traj_use_vision else 0)
             self.foot_traj_head = MLP(
